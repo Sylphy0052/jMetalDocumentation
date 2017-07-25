@@ -3,19 +3,19 @@
 ### Version: jMetal 5.3
 
 * New algorithms
- * [MOEA/D-DD](http://ieeexplore.ieee.org/document/6964796/). Contribution of @vinixnan
- * Variants with measures of algorithms WASF-GA, DMOPSO, and SMPSO
+  * [MOEA/D-DD](http://ieeexplore.ieee.org/document/6964796/). Contribution of @vinixnan
+  * Variants with measures of algorithms WASF-GA, DMOPSO, and SMPSO
 
 * Quality indicators
- * The R2 indicator can be applied now to fronts with more than two objectives.
+  * The R2 indicator can be applied now to fronts with more than two objectives.
 
 * Miscelanea
- * Class [ChartContainer](https://github.com/jMetal/jMetal/blob/master/jmetal-core/src/main/java/org/uma/jmetal/util/chartcontainer/ChartContainer.java), which is being developed by @georgero5. This class allows to display information of algorithms while they are running, such as the current Pareto front approximation or the evolution of indicators such as the Hypervolume. See classes [DMOPSOMeasuresRunner](https://github.com/jMetal/jMetal/blob/master/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/DMOPSOMeasuresRunner.java) and [NSGAIIMeasuresWithChartsRunner](https://github.com/jMetal/jMetal/blob/master/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/NSGAIIMeasuresWithChartsRunner.java) for examples using it.
- * Added getters and setters to all the parameters of the operators.
- * New interfaces for random generators based on functional interfaces.
+  * Class [ChartContainer](https://github.com/jMetal/jMetal/blob/master/jmetal-core/src/main/java/org/uma/jmetal/util/chartcontainer/ChartContainer.java), which is being developed by @georgero5. This class allows to display information of algorithms while they are running, such as the current Pareto front approximation or the evolution of indicators such as the Hypervolume. See classes [DMOPSOMeasuresRunner](https://github.com/jMetal/jMetal/blob/master/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/DMOPSOMeasuresRunner.java) and [NSGAIIMeasuresWithChartsRunner](https://github.com/jMetal/jMetal/blob/master/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective/NSGAIIMeasuresWithChartsRunner.java) for examples using it.
+  * Added getters and setters to all the parameters of the operators.
+  * New interfaces for random generators based on functional interfaces.
 
 * Bugs
- * Fixed a bug in algorithm MOEA/D
+  * Fixed a bug in algorithm MOEA/D
 
 
 ### Version: jMetal 5.2

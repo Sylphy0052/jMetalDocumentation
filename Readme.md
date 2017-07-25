@@ -3,7 +3,7 @@
 **jMetal** is an object-oriented Java-based framework for multi-objective optimization with metaheuristics
 (http://jmetal.github.io/jMetal/).
 
-This site contains documentation of the latest version of jMetal (version 5.2). The jMetal 5 project is hosted in GitHub: https://github.com/jMetal/jMetal 
+This site contains documentation of the latest version of jMetal (version 5.3). The jMetal 5 project is hosted in GitHub: https://github.com/jMetal/jMetal 
 
 ## Table of contents
 1. [Introduction](introduction.md)
