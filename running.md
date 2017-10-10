@@ -64,7 +64,7 @@ Then, the operators and the algorithm are configured:
 
     algorithm = new NSGAIIBuilder<DoubleSolution>(problem, crossover, mutation)
         .setSelectionOperator(selection)
-        .setMaxIterations(250)
+        .setMaxEvaluations(25000)
         .setPopulationSize(100)
         .build() ;
 ```
