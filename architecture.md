@@ -1,4 +1,4 @@
-<div id='id-architecture'/>
+<!--<div id='id-architecture'/>-->
 ## Architecture
 
 The architecture of jMetal 5 relies on four interfaces: 
