@@ -1,4 +1,4 @@
-## Running algorihtms
+## Running algorithms
 To run an algorithm in jMetal you have two choices: using an IDE or using the command line. We explain both methods in this section. We comment first how to configure a metaheuristic algorithm to solve a problem.
 
 ### Configuring algorithms
