@@ -8,10 +8,12 @@ We provide at least a runner class for every algorithm included in jMetal. They 
 
 As explanatory examples, we include different runners for the NSGA-II algorithm, showing different ways of configuring and using it:
 * `NSGAIIRunner`: configuration of the standard NSGA-II to solve continuous problems.
-* `NSGAIIInteger`: configuration to solve integer problems.
-* `NSGAIIBinary`: configuration to solve binary problems.
-* `NSGAIIMeasures`: similar to `NSGAIIRunner`, but it includes examples of how to use measures.
-* `ParallelNSGAII`: as `NSGAIIRunner` but configured to use threads to evaluate the populations in parallel.
+* `NSGAIIIntegerRunner`: configuration to solve integer problems.
+* `NSGAIIBinaryRunner`: configuration to solve binary problems.
+* `NSGAIIMeasuresRunner`: similar to `NSGAIIRunner`, but it includes examples of how to use measures.
+* `NSGAIIMeasuresWithChartsRunner`: similar to `NSGAIIMeasuresRunner`, but plotting a graph showing the evolution of the front during the execution of the algorithm.
+* `NSGAIIStoppingByTimeRunner`: example showing how to configure NSGA-II to use a stopping condition based on a predefined time instead of a given number of evaluations.
+* `ParallelNSGAIIRunner`: as `NSGAIIRunner` but configured to use threads to evaluate the populations in parallel.
 
 We describe next the `NSGAIIRunner` class. The Javadoc comment indicates the program parameters: the first one is the class of the problem to solve; the second one, is an optional parameter, indicating the path to a file containing a reference front. This front is an approximation to the optimal Pareto front of the problem to be solved, and in case of being provided, it will be used to compute all the quality indicators available:
 ```java
@@ -86,7 +88,7 @@ The last step is to run the algorithm and to write the obtained solutions into t
 ```
 
 ### Running an algorithm from an IDE
-Once you have configured your algorithm, you can use your favorite IDE to execute them. For example, in the case of IntellJ Idea you can select the runner class name and select the option "Run 'NSGAIIRunner.main()'" clicking with the left mouse button if you intend to run NSGA-II:
+Once you have configured your algorithm, you can use your favorite IDE to execute them. For example, in the case of IntellJ Idea you can select the runner class name and select the option "Run 'NSGAIIRunner.main()'" by clicking with the left mouse button if you intend to run NSGA-II:
 ![Running with IntellJ Idea](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/runningNSGAIIRunnerInIntelliJIdea.png)
 
 As a result of the execution, the following messages are printed into the output console:
@@ -128,7 +130,7 @@ If you plan to run a jMetal algorithm from the command line, you have to take in
 2. Indicate java the location of these jar files. You have at least two ways of doing it. One is to set the  `CLASSPATH` environment variable:
 
 ```
-export CLASSPATH=jmetal-core/target/jmetal-core-5.0-jar-with-dependencies.jar:jmetal-problem/target/jmetal-problem-5.0-jar-with-dependencies.jar:jmetal-exec/target/jmetal-exec-5.0-jar-with-dependencies.jar:jmetal-problem/target/jmetal-problem-5.0-jar-with-dependencies.jar
+export CLASSPATH=jmetal-core/target/jmetal-core-5.6-jar-with-dependencies.jar:jmetal-problem/target/jmetal-problem-5.6-jar-with-dependencies.jar:jmetal-exec/target/jmetal-exec-5.6-jar-with-dependencies.jar:jmetal-problem/target/jmetal-problem-5.6-jar-with-dependencies.jar
 ```
   
   Then you can execute an algorithm this way (we are going to execute NSGA-II):
