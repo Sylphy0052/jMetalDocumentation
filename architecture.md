@@ -52,7 +52,7 @@ public interface Algorithm<Result> extends Runnable, Serializable, DescribedEnti
 
 jMetal 5 includes a hierarchy of classes that inherits from `Algorithm`, as depicted in the following diagram: 
 
-![jMetal architecture](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/algorithmHiercharchy.png)
+![jMetal architecture](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/algorithmHierarchy.png)
 
 On the one hand, we found a level of abstract classes (e.g., `AbstractEvolutionaryAlgorithm` or `AbstractParticleSwarmOptimization`) which constitute templates than can be used to facilitate the implementation of algorithms by reusing an extending the already provided code. On the other hand, we can see two examples of algorithms, MOEA/D and NSGAII45, which do not follow none of the provided templates. This way you are free to implement a new algorithm on your own or by extending some of the existing classes.
 
