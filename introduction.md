@@ -13,8 +13,8 @@ After nine years since the first release of jMetal, we decided to make a deep re
   * Application of unit testing
   * Better use of Java features (e.g, generics)
   * Design patterns (singleton, builder, factory, observer)
-  * Application of clean code guidelines - “Clean code: A Handbook of Agile Software Craftsmanship" (Robert C. Martin)
+  * Application of clean code guidelines - ''Clean code: A Handbook of Agile Software Craftsmanship'' (Robert C. Martin)
 * Parallelism support
 * Introducing measures to get information of the algorithms in runtime
 
-A discussion about the new jMetal framework can be found in the paper "Redesigning the jMetal Multi-Objective Optimization Framework. Antonio J. Nebro, Juan J. Durillo, Matthieu Vergne. GECCO (Companion) 2015". DOI: http://dx.doi.org/10.1145/2739482.2768462
+The result was called jMetal 5, and a discussion about it can be found in the paper "Redesigning the jMetal Multi-Objective Optimization Framework. Antonio J. Nebro, Juan J. Durillo, Matthieu Vergne. GECCO (Companion) 2015". DOI: http://dx.doi.org/10.1145/2739482.2768462
