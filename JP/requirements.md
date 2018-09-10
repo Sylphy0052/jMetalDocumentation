@@ -1,7 +1,7 @@
 <!--<div id='id-requirements'/>-->
-## Requirements
-jMetal is implemented in Java. Since version 5.2, we are using features of Java 8, so a Java 8 JDK or higher is required to compile the project. 
+## 要件
+jMetalはJavaで実装されている．ver5.2以降，Java8の機能を使用しているため，プロジェクトをコンパイルするにはJava8 JDK以上が必要になる．
 
-As jMetal is a Maven project, this tool is also a requirement to compile, test and package the code.
+jMetalはMavenプロジェクトであるため，このツールはコードをコンパイル，テスト，パッケージ化するための要件である．
 
-Optionally, R and Latex are needed if you use the code to carry out experimental studies to run the R scripts and compile the Latex files that will be generated.
+必要に応じて，Rスクリプトを実行し，生成されるLatexファイルをコンパイルするための実験的研究を行うためにコードを使用する場合は，RとLatexが必要になる．
