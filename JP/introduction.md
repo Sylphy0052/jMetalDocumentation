@@ -1,20 +1,20 @@
 <!--<div id='introduccion'/>-->
 
-## Introduction 
+## はじめに
 
-The jMetal project started in 2006 as the result of our need of having a easy to use, flexible, extensible and portable multi-objective optimization framework with metaheuristics. Since 2008 it has been hosted in http://jmetal.sourceforge.net. Since 2014 the current development is located in https://github.com/jMetal/jMetal.
+jMetalプロジェクトはメタヒューリスティックを備えた，使いやすく，柔軟で拡張性があり，ポータブルな多目的最適化フレームワークを必要と認め，2006年に開始された．2008年以降， http://jmetal.sourceforge.net でホストされている．2014年以降， https://github.com/jMetal/jMetal で開発されている．
 
-After nine years since the first release of jMetal, we decided to make a deep redesign of the software in 2014. Some of the ideas taken into consideration were:
+jMetalの最初のリリースから9年が経過したのち，2014年にソフトウェアの大幅な再設計が行われた．アイディアは次の通りである．
 
-* Architecture redesign to provide a simpler design while keeping the same functionality.
-* Maven is used as the tool for development, testing, packaging and deployment.
-* Promote code reusing by providing algorithm templates
-* Improve code quality:
-  * Application of unit testing
-  * Better use of Java features (e.g, generics)
-  * Design patterns (singleton, builder, factory, observer)
-  * Application of clean code guidelines - ''Clean code: A Handbook of Agile Software Craftsmanship'' (Robert C. Martin)
-* Parallelism support
-* Introducing measures to get information of the algorithms in runtime
+- アーキテクチャは同じ機能を維持しながらシンプルなデザインを提供する
+- Mavenは開発，テスト，パッケージング，デプロイメントのツールとして使用される
+- アルゴリズムテンプレートを提供することでコードの再利用の促進
+- コード品質の向上
+  - 単体テストの応用
+  - Javaの機能(ジェネリックなど)の使い方の改善
+  - デザインパターン(singleton, builder, factory, observer)の使用
+  - クリーンコードガイドラインの適用「Clean code: A Handbook of Agile Software Craftsmanship」(Robert C.Martin)
+- 並列処理のサポート
+- 実行時にアルゴリズムの情報を取得する手段の紹介
 
-The result was called jMetal 5, and a discussion about it can be found in the paper "Redesigning the jMetal Multi-Objective Optimization Framework. Antonio J. Nebro, Juan J. Durillo, Matthieu Vergne. GECCO (Companion) 2015". DOI: http://dx.doi.org/10.1145/2739482.2768462
+その結果，jMetal5と呼び，「Redesigning the jMetal Multi-Objective Optimization Framework. Antonio J. Nebro, Juan J. Durillo, Matthieu Vergne. GECCO (Companion) 2015」の論文に記載された．DOI: http://dx.doi.org/10.1145/2739482.2768462
