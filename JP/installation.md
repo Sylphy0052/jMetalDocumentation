@@ -1,21 +1,25 @@
 <!--<div id='id-installation'/>-->
-## Installation
-jMetal is a Maven project hosted in GitHub, so there are two ways of getting the software: adding it as a dependence in your own Maven project, or getting the source code from https://github.com/jMetal/jMetal.
+## インストール
+jMetalはGithubでホストされているMavenプロジェクトであり，ソフトウェアをインストールする方法は2種類ある．
+1. Mavenプロジェクトを依存関係で追加する
+2. https://github.com/jMetal/jMetal から入手する
 
-### Using jMetal as a Maven/Gradle dependence
-jMetal 5 is structured into four submodules:
-* `jmetal-core` : Classes of the core architecture plus some utilities, including quality indicators.
-* `jmetal-algorithm` : Implementations of metaheuristics.
-* `jmetal-problem` : Implementations of problems.
-* `jmetal-exec` : Executable programs to configure and run the algorithms plus some utilities.
+### jMetalをMaven/Gradle依存関係で使用する
+jMetal5は4つのサブモジュールから構成されている．
+- `jmetal-core`: コアアーキテクチャのクラスやいくつかのユーティリティ(品質尺度を含む)
+- `jmetal-algorithm`: メタヒューリスティックの実装
+- `jmetal-problem`: 問題の実装
+- `jmetal-exec`: アルゴリズムといくつかのユーティリティを設定し実行するプログラム
 
-These modules can be found in the [Central Repository](http://search.maven.org/) (note that the last version is jMetal 5.6):
-![jMetal in Central Repository](https://github.com/jMetal/jMetalUserManual/blob/master/figures/centralRepository.png)
+これらのモジュールは[Central Repository](http://search.maven.org/)にある(最新バージョンはjMetal 5.6)．
 
-Here you can get the Maven dependency you need. For example, if your want to use some of the classes in `jmetal-core`, you just have to add this dependence to the `pom.xml` file of your project:
-![Maven dependence](https://github.com/jMetal/jMetalUserManual/blob/master/figures/mavenDependence.png)
+![jMetal in Central Repository](./figures/centralRepository.png)
 
-For Gradle the process is similar. Make sure you have the Maven repository listed in your build.gradle:
+ここから必要なMavenの依存関係を取得できる．例えば，`jmetal-core`でのクラスのいくつかを使いたい場合，この依存関係をプロジェクトの`pom.xml`に追加すれば良い．
+
+![Maven dependence](./figures/mavenDependence.png)
+
+Gradleの場合も同様に，build.gradleにMavenリポジトリがリストされて入れば良い．
 
 ```Groovy
 repositories {
@@ -23,7 +27,7 @@ repositories {
 }
 ```
 
-You can then use the same modules as for Maven. For example to add a dependency to the core and algorithm modules:
+Mavenのように同じモジュールを使用できる．例えば，コアモジュールとアルゴリズムモジュールに依存関係を追加するには，次のようにすればよい．
 
 ```Groovy
 dependencies {
@@ -34,15 +38,17 @@ dependencies {
 }
 ```
 
-The same can be done in case of need the other packages.
+他のパッケージが必要な場合にも同じようにできる．
 
-### Getting the source code from GitHub
-And advantage of having a project in GitHub is that you can easily get a copy of the source code just by cloning it. This can be done in several ways:
-* Using Git from the command line of a terminal:
+### Githubからソースコードを取得する
+Githubにプロジェクトがあることの利点は，ソースコードをコピーするだけで簡単にその仕組みを使うことができることである．これはいくつかの方法で行うことができる．
+
+- terminalのコマンドラインからGitを使用する．
+
 ```
 git clone https://github.com/jMetal/jMetal.git
 ```
-* Selecting the button "Clone in Desktop" that is located in the right side of the page in https://github.com/jMetal/jMetal
-* Alternatively, you can download a Zip file with all the files by pushing the button "Download ZIP" in the same page
 
-Once you have the source code, you use you favorite IDE to import (Eclipse) or open (Intellij Idea) the project as a Maven project, or merely open it (Netbeans).
+- https://github.com/jMetal/jMetal のページ右側にある "Open in Desktop"か"Download ZIP"を選択する
+
+ソースコードを取得すれば，IDEを使用してプロジェクトをMavenプロジェクトとしてimport (Eclipse)かopen (Intellij Idea)したり，開く (Netbeans)ことができる．
