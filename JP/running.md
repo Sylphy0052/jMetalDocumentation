@@ -1,21 +1,23 @@
-## Running algorithms
-To run an algorithm in jMetal you have two choices: using an IDE or using the command line. We explain both methods in this section. We comment first how to configure a metaheuristic algorithm to solve a problem.
+## アルゴリズムの実行
+jMetalでアルゴリズムを実行するには，IDEを使用する方法とコマンドラインを使用する方法は2つある．このセクションでは，両方の方法について説明する．最初に問題を解決するためにメタヒューリスティックなアルゴリズムを構成する方法について説明する．
 
-### Configuring algorithms
-In jMetal 5, to configure and run an algorithm we need to write a class for that purpose; we refer to such a class as runner. Configuring an algorithm from an external configuration file is still a missing feature.
+### アルゴリズムの設定
+jMetal5ではアルゴリズムを設定して実行するために，クラスを書く必要がある．そのようなクラスをランナー(Runner)と呼ぶ．外部構成ファイルからアルゴリズムを構成する機能はまだ実装されていない．
 
-We provide at least a runner class for every algorithm included in jMetal. They can be found in the `jmetal-exec` module, in the folder https://github.com/jMetal/jMetal/tree/master/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective. 
+jMetalに実装されている全てのアルゴリズムに少なくともRunnerクラスを提供する．`jmetal-exec`モジュールのフォルダ(https://github.com/jMetal/jMetal/tree/master/jmetal-exec/src/main/java/org/uma/jmetal/runner/multiobjective)にある．
 
-As explanatory examples, we include different runners for the NSGA-II algorithm, showing different ways of configuring and using it:
-* `NSGAIIRunner`: configuration of the standard NSGA-II to solve continuous problems.
-* `NSGAIIIntegerRunner`: configuration to solve integer problems.
-* `NSGAIIBinaryRunner`: configuration to solve binary problems.
-* `NSGAIIMeasuresRunner`: similar to `NSGAIIRunner`, but it includes examples of how to use measures.
-* `NSGAIIMeasuresWithChartsRunner`: similar to `NSGAIIMeasuresRunner`, but plotting a graph showing the evolution of the front during the execution of the algorithm.
-* `NSGAIIStoppingByTimeRunner`: example showing how to configure NSGA-II to use a stopping condition based on a predefined time instead of a given number of evaluations.
-* `ParallelNSGAIIRunner`: as `NSGAIIRunner` but configured to use threads to evaluate the populations in parallel.
+例として，NSGA-Ⅱアルゴリズムの様々なRunnerや構成方法，使用方法を示す．
 
-We describe next the `NSGAIIRunner` class. The Javadoc comment indicates the program parameters: the first one is the class of the problem to solve; the second one, is an optional parameter, indicating the path to a file containing a reference front. This front is an approximation to the optimal Pareto front of the problem to be solved, and in case of being provided, it will be used to compute all the quality indicators available:
+- `NSGAIIRunner`: 継続的な問題を解決するための標準NSGA-Ⅱの設定
+- `NSGAIIIntegerRunner`: 整数問題を解決するための設定
+- `NSGAIIBinaryRunner`: バイナリ問題を解決するための設定
+- `NSGAIIMeasuresRunner`: `NSGAIIRunner`に似ているが,評価の使用例も含まれる
+- `NSGAIIMeasuresWithChartsRunner`: `NSGAIIMeasuresRunner`に似ているが, アルゴリズム実行中のフロントの進化を示すグラフをプロットする．
+- `NSGAIIStoppingByTimeRunner`: 与えられた評価数ではなく，あらかじめ定義された時間に基づいて停止条件を使用するようにNSGA-Ⅱを設定する方法を示す例である
+- `ParallelNSGAIIRunner`: `NSGAIIRunner`と同じだが，並列で母集団を評価するスレッドを使用するように設定されている
+
+次に`NSGAIIRunner`クラスについて説明する．Javadocコメントはプログラムのパラメータを示す．最初のパラメータは解決する問題のクラスである．2番目のパラメータはオプションのパラメータで，参照フロントを含むファイルへのパスを示す．このフロントは，解決すべき問題の最適なパレートフロントの近似であり，提供された場合，それは利用可能な全ての品質評価を計算するために使用される．
+
 ```java
 public class NSGAIIRunner extends AbstractAlgorithmRunner {
   /**
@@ -26,7 +28,9 @@ public class NSGAIIRunner extends AbstractAlgorithmRunner {
    */
   public static void main(String[] args) throws JMetalException, FileNotFoundException {
 ```
-The first part of the `main` method declares the type of the problem to solve (a problem dealing with `DoubleSolution` individuals in this example) and the operators. The `referenceParetoFront` is used to indicate the name of the optional reference front:
+
+mainメソッドの最初の部分は，解決する問題のタイプ(この例は`DoubleSolution`個体を扱う問題)と演算子を宣言する．`referenceParetoFront`はオプションの参照フロントの名前を示すのに使用される．
+
 ```java
     Problem<DoubleSolution> problem;
     Algorithm<List<DoubleSolution>> algorithm;
@@ -35,7 +39,8 @@ The first part of the `main` method declares the type of the problem to solve (a
     SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
     String referenceParetoFront = "" ;
 ```
-The next group of sentences parse the program arguments. A benchmark problem (ZDT1 in the example) is solved by default when no arguments are indicated:
+次の分のグループはプログラムの引数を解析する．引数が指定されていない場合のベンチマーク問題(ZDT1)はデフォルトで解決される．
+
 ``` java
     String problemName ;
     if (args.length == 1) {
@@ -48,12 +53,16 @@ The next group of sentences parse the program arguments. A benchmark problem (ZD
       referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf" ;
     }
 ```
-Next, the problem is loaded using its class name:
+
+次にクラス名を使用して問題がロードされる．
+
 ```java
     problem = ProblemUtils.<DoubleSolution> loadProblem(problemName);
 ```
-Then, the operators and the algorithm are configured:
-```java 
+
+次に演算子とアルゴリズムを構成する．
+
+```java
     double crossoverProbability = 0.9 ;
     double crossoverDistributionIndex = 20.0 ;
     crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex) ;
@@ -70,7 +79,8 @@ Then, the operators and the algorithm are configured:
         .setPopulationSize(100)
         .build() ;
 ```
-The last step is to run the algorithm and to write the obtained solutions into two files: one for the variable values and one for the objective values; optionally, if a reference front has been provided it also prints the values of all the available quality indicators for the computed results:
+最後のステップはアルゴリズムを実行し，得られた解を2つのファイルに書き込むことである．1つは変数地用，もう1つは客観値用です．任意選択的に，基準フロントが提供されている場合，計算結果に対する利用可能な全ての品質評価の値も表示される．
+
 ```java
     AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
         .execute() ;
@@ -87,11 +97,13 @@ The last step is to run the algorithm and to write the obtained solutions into t
   }
 ```
 
-### Running an algorithm from an IDE
-Once you have configured your algorithm, you can use your favorite IDE to execute them. For example, in the case of IntellJ Idea you can select the runner class name and select the option "Run 'NSGAIIRunner.main()'" by clicking with the left mouse button if you intend to run NSGA-II:
-![Running with IntellJ Idea](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/runningNSGAIIRunnerInIntelliJIdea.png)
+### IDEからアルゴリズムを実行する
+アルゴリズムを設定したら，好きなIDEを使用してアルゴリズムを実行することができる．たとえば，IntellJ Ideaの場合は，Runnerクラス名を選択し，NSGA-Ⅱを実行する場合は"Run 'NSGAIIRunner.main()'"オプションを選択する．
 
-As a result of the execution, the following messages are printed into the output console:
+![Running with IntellJ Idea](./figures/runningNSGAIIRunnerInIntelliJIdea.png)
+
+実行すると次のメッセージが出力コンソールに出力される．
+
 ```
 jul 27, 2015 4:21:59 PM org.uma.jmetal.runner.multiobjective.NSGAIIRunner main
 INFORMACIÓN: Total execution time: 1147ms
@@ -102,7 +114,7 @@ INFORMACIÓN: Objectives values have been written to file FUN.tsv
 jul 27, 2015 4:21:59 PM org.uma.jmetal.runner.AbstractAlgorithmRunner printFinalSolutionSet
 INFORMACIÓN: Variables values have been written to file VAR.tsv
 jul 27, 2015 4:22:00 PM org.uma.jmetal.runner.AbstractAlgorithmRunner printQualityIndicators
-INFORMACIÓN: 
+INFORMACIÓN:
 Hypervolume (N) : 0.6594334269577787
 Hypervolume     : 0.6594334269577787
 Epsilon (N)     : 0.012122558511198256
@@ -120,37 +132,38 @@ R2              : 0.13179198315493879
 Error ratio     : 1.0
 ```
 
-The results tagged with `(N)` indicate that the fronts are normalized before computing the quality indicator.
+`(N)`でタグづけされた結果は品質評価を計算する前にフロントが正規化されていることを示す．
 
+### コマンドラインからアルゴリズムを実行する
+コマンドラインからjMetalアルゴリズムを実行する場合は，次の要件を考慮する必要がある．
 
-### Running an algorithm from the command line
-If you plan to run a jMetal algorithm from the command line, you have to take into account the following requirements:
-
-1. Build the project with `mvn package`. This will create, for each subproject (i.e, `jmetal-core`, `jmetal-problem`, `jmetal-algorithm`, and `jmetal-exec`), a jar file with all the dependences.
-2. Indicate java the location of these jar files. You have at least two ways of doing it. One is to set the  `CLASSPATH` environment variable:
+1. `mvn package`でプロジェクトをビルドする．これにより全ての依存関係を持つjarファイルである各サブプロジェクト(`jmetal-core`, `jmetal-problem`, `jmetal-algorithm`, `jmetal-exec`)が作成される．
+2. これらのjarファイルの場所をjavaに指定する．その方法は2つある．1つは`CLASSPATH`環境変数を設定することである．
 
 ```
 export CLASSPATH=jmetal-core/target/jmetal-core-5.6-jar-with-dependencies.jar:jmetal-problem/target/jmetal-problem-5.6-jar-with-dependencies.jar:jmetal-exec/target/jmetal-exec-5.6-jar-with-dependencies.jar:jmetal-problem/target/jmetal-problem-5.6-jar-with-dependencies.jar
 ```
-  
-  Then you can execute an algorithm this way (we are going to execute NSGA-II):
-  
+
+この方法でアルゴリズム(NSGA-II)を実行することができる．
+
 ```
-java org.uma.jmetal.runner.multiobjective.NSGAIIRunner 
+java org.uma.jmetal.runner.multiobjective.NSGAIIRunner
 ```
-3. The other alternative is to indicate the location of these jar files using the `-cp` or `-classpath` options of the `java` command:
-  
+
+3. もう1つの方法は`java`コマンドの`-cp`または`-classpath`オプションを使ってこれらのjarファイルの場所を指定することである．
+4.
  ```
 java -cp jmetal-exec/target/jmetal-exec-5.0-SNAPSHOT-jar-with-dependencies.jar:jmetal-core/target/jmetal-core-5.0-SNAPSHOT-jar-with-dependencies.jar:jmetal-problem/target/jmetal-problem-5.0-SNAPSHOT-jar-with-dependencies.jar:jmetal-algorithm/target/jmetal-algorithm-5.0-Beta-35-jar-with-dependencies.jar org.uma.jmetal.runner.multiobjective.NSGAIIRunner
  ```
- 
- This example executes NSGA-II with the default parameters. If you want to solve a given problem its class name must be provided as an argument. For example, to solve the benchmark problem `ZDT4` the command would be:
- 
+
+ この例ではNSGA-IIをデフォルトのパラメータで実行する．与えられた問題を解決する場合クラス名を引数として与えなければならない．例えばベンチマーク問題`ZDT4`を解決するには次のコマンドを実行する．
+
  ```
  java org.uma.jmetal.runner.multiobjective.NSGAIIRunner org.uma.jmetal.problem.multiobjective.zdt.ZDT4
  ```
- 
-and the output will be similar to this:
+
+出力は次のようになる．
+
 ```
 jul 27, 2015 6:48:27 PM org.uma.jmetal.runner.multiobjective.NSGAIIRunner main
 INFORMACIÓN: Total execution time: 683ms
@@ -161,12 +174,15 @@ INFORMACIÓN: Objectives values have been written to file FUN.tsv
 jul 27, 2015 6:48:27 PM org.uma.jmetal.runner.AbstractAlgorithmRunner printFinalSolutionSet
 INFORMACIÓN: Variables values have been written to file VAR.tsv
 ```
- 
-In the case of problems having a known Pareto front (or a Pareto front approximation), adding the file containing it allows to apply the available quality indicators to the obtained front. This way, the command to solve ZDT4 would be:
+
+既知のパレートフロント(パレート前方近似)を有する問題の場合，それを含むファイルを追加することにより，得られたフロントに利用可能な品質評価を適用することが可能になる．このようにして，ZDT4を解決するコマンドは次のようになる．
+
 ```
 java org.uma.jmetal.runner.multiobjective.NSGAIIRunner org.uma.jmetal.problem.multiobjective.zdt.ZDT4 jmetal-problem/src/test/resources/pareto_fronts/ZDT4.pf
 ```
-and this would be output:
+
+このように出力される．
+
 ```
 jul 27, 2015 6:49:21 PM org.uma.jmetal.runner.multiobjective.NSGAIIRunner main
 INFORMACIÓN: Total execution time: 598ms
@@ -177,7 +193,7 @@ INFORMACIÓN: Objectives values have been written to file FUN.tsv
 jul 27, 2015 6:49:21 PM org.uma.jmetal.runner.AbstractAlgorithmRunner printFinalSolutionSet
 INFORMACIÓN: Variables values have been written to file VAR.tsv
 jul 27, 2015 6:49:21 PM org.uma.jmetal.runner.AbstractAlgorithmRunner printQualityIndicators
-INFORMACIÓN: 
+INFORMACIÓN:
 Hypervolume (N) : 0.6584874391103687
 Hypervolume     : 0.658491021119803
 Epsilon (N)     : 0.014508161683056214
@@ -194,4 +210,3 @@ R2 (N)          : 0.13208551920620412
 R2              : 0.13208472309027727
 Error ratio     : 1.0
 ```
-
