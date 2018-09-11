@@ -1,33 +1,31 @@
-## Compiling
-
-Once you have the source code of jMetal you can use it in to ways: from an IDE or from the command line of a terminal. The IDE alternative is the simplest one and, if you are used to the tool, compiling and running algorithms is easy.
+## コンパイル
+jMetalのソースコードを取得したら，IDEまたは端末のコマンドラインから使用できる．IDEの代替として単純で，ツールに慣れていればアルゴリズムのコンパイルと実行は簡単である．
 
 ### Intellj Idea
-  To build the project you have to select `Build` -> `Make Project`
-  
-![Building with IntelliJ Idea](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/BuildIJICE14.png)  
-  
-  
-###Eclipse
-  If the `Project` -> `Build Automatically` is set, Eclipse will automatically build the project. Otherwise,  select  `Project` -> `Build Project`
-  
-![Building with Eclipse](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/BuildEclipse.png)  
+プロジェクトをビルドするには`Build`→`Make Project`を選択する
 
-  
-###Netbeans:
-  In Netbeans you have to select `Run` -> `Build Project`
+![Building with IntelliJ Idea](./figures/BuildIJICE14.png)
 
-![Building with Netbeans](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/BuildNetbeans.png)  
 
-### Building from the command line
+### Eclipse
+`Project`→`Build Automatically`が設定されるとEclipseは自動的にプロジェクトをビルドする．それ以外の場合は`Project`→`Build Project`を選択する．
 
-Once you have downloaded the source code you can use the command line to build the project by using Maven commands. If you open a terminal you will have something similar to this:
+![Building with Eclipse](./figures/BuildEclipse.png)
 
-![jMetal in a terminal](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/jMetalInTerminal.png)  
+### Netbeans
+Netbeansでは`Run`→`Build Project`を選択する必要がある．
 
-Then you have Maven to your disposal to work with the project:
-* `mvn clean`: cleaning the project
-* `mvn compile`: compiling
-* `mvn test`: testing
-* `mvn package`: compiling, testing, generating documentation, and packaging in jar files
-* `mvn site`: generates a site for the project
+![Building with Netbeans](./figures/BuildNetbeans.png)
+
+### コマンドラインからのビルド
+ソースコードをダウンロードしたら，Mavenコマンドを使ってプロジェクトをビルドすることができる．Terminalを開くと次のようになる．
+
+![jMetal in a terminal](./figures/jMetalInTerminal.png)
+
+Mavenの使い方
+
+- `mvn clean`: プロジェクトのクリーニング
+- `mvn compile`: コンパイル
+- `mvn test`: テスト
+- `mvn package`: コンパイル，テスト，ドキュメントの作成，jarファイルのパッケージ化
+- `mvn site`: プロジェクトのサイトを生成する
