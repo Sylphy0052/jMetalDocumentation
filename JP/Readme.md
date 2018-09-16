@@ -23,5 +23,5 @@
 5. [アルゴリズムテンプレート](algorithmTemplates.md)
 6. [品質尺度](qualityIndicators.md)
 7. [前回の変更履歴](changelog.md)
-8. [昨日の概要](features.md)
+8. [機能の概要](features.md)
 9. [Javadoc](http://jmetal.github.io/jMetal/apidocs/index.html)
