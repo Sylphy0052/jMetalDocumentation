@@ -1,8 +1,5 @@
-## The `Operator` interface
-Metaheuristic techniques are based on modifying or generating new solutions from existing ones by
-means of the application of different operators. For example, EAs make use of crossover, mutation, and
-selection operators for modifying solutions. In jMetal, any operation altering or generating solutions (or
-sets of them) implements or extends the `Operator` interface:
+## `Operator`インターフェース
+メタヒューリスティック技術は異なるオペレータのアプリケーションによって既存のソリューションから新しいソリューションを変更または生成することに基づいている．例えば，EAはソリューションを変更するために交叉，突然変異，および選択を使用する．jMetalでは，ソリューション(またはそれらのセット)を変更または生成する操作は全て，`Operator`インターフェースを実装または拡張する．
 
 ``` java
 package org.uma.jmetal.operator;
@@ -23,24 +20,23 @@ public interface Operator<Source, Result> {
 }
 
 ```
-The generics in this interface are intended to indicate that an operator is applied to a `Source` object and returns as a result  `Result` object. 
+このインターフェースGenericsはオペレータが`Source`オブジェクトに適用され，結果として`Result`オブジェクトを返すことを示している．
 
+このフレームワークにはすでに4つの異なるクラスに分類することができる複数のオペレータが組み込まれている．
 
-The framework already incorporates a number of operators, which can be classiffed into four different
-classes:
-* Crossover. Represents the recombination or crossover operators used in EAs. Some of the included
-operators are the simulated binary (SBX) crossover and the single-point crossover for real and
-binary encodings, respectively.
-* Mutation. Represents the mutation operator used in EAs. Examples of included operators are
-polynomial mutation (real encoding) and bit-flip mutation (binary encoding).
-* Selection. This kind of operator is used for performing the selection procedures in many metaheuristics. An
-example of selection operator is the binary tournament.
-* LocalSearch. This class is intended for representing local search procedures. It contains a  method for consulting how many evaluations have been performed after been applied.
+- 交叉(Crossover):EAで使用される組換えまたは交叉オペレータを表す．含まれるオペレータには，それぞれ実数バイナリ(SBX)の交叉と実数およびバイナリのエンコードのためのSingle-poing crossoverがある．
 
-We review the interfaces and implementations of these operators next.
+- 突然変異(Mutation):EAで使用される突然変異オペレータを表す．含まれるオペレータの例には，polynomial mutation(real encoding)とbit-flip mutation(binary encoding)がある．
 
-### Crossover operators
-The `CrossoverOperator` interface represents any crossover in jMetal 5:
+- 選択(Selection):この種のオペレータは，多くのメタヒューリスティックで選択手順を実行するために使用される．選択オペレータの例はバイナリトーナメントである．
+
+- LocalSearch:このクラスは，ローカル検索プロシージャを表すためのものである．それは適用された後にいくつの評価が実行されたかを調べる方法を含んでいる．
+
+次に，これらのオペレータのインタフェースと実装について説明する．
+
+### 交叉(Crossover)オペレータ
+`CrossoverOperator`インターフェースは，jMetal5内の任意の交叉を表す．
+
 ```java
 package org.uma.jmetal.operator;
 
@@ -55,9 +51,11 @@ package org.uma.jmetal.operator;
 public interface CrossoverOperator<S extends Solution<?>> extends Operator<List<S>,List<S>> {
 }
 ```
-This interface simply states that a crossover has as a source a list of `Solution` objects and return as a result another list of solutions. Let us examine two implementations of this interface, one for double solutons and another one for binary solutions. 
 
-The simulated binary crossover (SBX) is the default crossover operator in many multiobjective evolutionary algorithms (e.g., NSGA-II, SPEA2, SMS-EMOA, MOCell, etc). A scheme of the `SBXCrossover` class is shown next:
+このインターフェースは，単に交叉がソースとして`Solution`オブジェクトのリストを持ち，結果として別のソリューションのリストを返す．このインターフェースの2つの実装を検討する．1つはdouble solutions，もう一つはbinary solutionsである．
+
+シミュレートされたBinary crossover(SBX)は多くの多目的進化アルゴリズム(NSGA-II,SPEA2,SMS_EMOA,MOCellなど)におけるデフォルトのCrossoverオペレータである．次に`SBXCrossover`クラスのスキームを示す．
+
 ```java
 package org.uma.jmetal.operator.impl.crossover;
 
@@ -113,7 +111,7 @@ public class SBXCrossover implements CrossoverOperator<DoubleSolution> {
 
     return doCrossover(crossoverProbability, solutions.get(0), solutions.get(1)) ;
   }
-  
+
   ...
 ```
 
