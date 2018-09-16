@@ -1,6 +1,6 @@
-## The `Algorithm` interface
+## `Algorithm`インターフェース
+jMetal5のメタヒューリスティックまたはアルゴリズムは`Algorithm`インターフェースを実装する実体(Entity)である．
 
-A metaheuristic or algorithm in jMetal 5 is an entity that implements the `Algorithm` interface:
 ```java
 package org.uma.jmetal.algorithm;
 
@@ -16,13 +16,15 @@ public interface Algorithm<Result> extends Runnable {
 }
 
 ```
-This interface is very generic: it specifies that an algorithm must have a `run()` method and return a result by the `getResult()` method. As it extends `Runnable`, any algorithm can be executed in a thread.
- 
-The symplicity of `Algorithm` offers plenty of freedom to implement a metaheuristic according to your favorite preferences. However, as jMetal 5 is a framework it includes a set of resources and strategies to help in the implementation of algorithms with the idea of promoting good design, code reusing, and flexibility. The key components are the use of the [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) and [algorithm templates](https://github.com/jMetal/jMetalDocumentation/blob/master/algorithmTemplates.md). In the next section we give a detailed description of how the well-known NSGA-II algorithm is implemented, configured, and extended.
+
+このインターフェースは非常に一般的である．アルゴリズムは`run()`メソッドを持っていなければならず，`getResult()`メソッドで結果を返すように指定する．`Runnable`を拡張するので，どのアルゴリズムもスレッドで実行できる．
+
+`Algorithm`の単純さは好きな好みに応じてメタヒューリスティックを実装する自由を豊富に提供する．しかし，jMetal5はフレームワークなので，優れたデザイン，コードの再利用，柔軟性を促進するという考え方でアルゴリズムの実装を支援する一連のリソースと戦略が含まれている．主要なコンポーネントは，[Builderパターン](https://en.wikipedia.org/wiki/Builder_pattern)と[アルゴリズム templates](https://github.com/jMetal/jMetalDocumentation/blob/master/algorithmTemplates.md)の使用である．次のセクションでは，よく知られているNSGA-IIアルゴリズムの実装，構成，および拡張の詳細について説明する．
 
 ### Case study: NSGA-II
+NSGA-IIは遺伝的アルゴリズム(GA)であり，すなわち進化アルゴリズム(EA)に属する．jMetal5で提供されるNSGA-IIの実装はドキュメントの[アルゴリズムテンプレート](https://github.com/jMetal/jMetalDocumentation/blob/master/algorithmTemplates.md)セクションで説明されている進化的アルゴリズムテンプレートに従う．つまり,
+[`AbstractEvolutionaryAlgorithm`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/algorithm/impl/AbstractEvolutionaryAlgorithm.java)クラスのメソッドを定義する必要がある．このテンプレートによれば，アルゴリズムのフロー制御は`run()`メソッドで定義される．
 
-NSGA-II is a genetic algorithm (GA), i.e. it belongs to the evolutionary algorithms (EAs) family. The implementation of NSGA-II provided in jMetal 5.0 follows the evolutionary algorithm template described in the [algorithm templates](https://github.com/jMetal/jMetalDocumentation/blob/master/algorithmTemplates.md) section of the documentation. This means that it must define the methods of the [`AbstractEvolutionaryAlgorithm`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/algorithm/impl/AbstractEvolutionaryAlgorithm.java) class. According to this template, the flow control of the algorithm is defined in the `run()` method:
 ```java
 @Override public void run() {
     List<S> offspringPopulation;
@@ -39,17 +41,19 @@ NSGA-II is a genetic algorithm (GA), i.e. it belongs to the evolutionary algorit
       updateProgress();
     }
   }
-  ```
+```
 
-We describe next how these methods are implemented in the [NSGAII](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/nsgaii/NSGAII.java) class.
+次にこれらのメソッドが[NSGA-II](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/nsgaii/NSGAII.java)クラスでどのように実装されるかについて説明する．
 
-The class declaration is as follows:
+クラスの宣言は次のとおりである．
+
 ```java
 public class NSGAII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, List<S>> {
    ...
 }
 ```
-which indicates that it extends the [`AbstractGeneticAlgorithm`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/algorithm/impl/AbstractGeneticAlgorithm.java). The generic `S` allows to specify the encoding of the solutions that will manipulate the algorithm, and it will determine the kind of problems that can be solved as well as the operators that can be used. This is exemplified in the class constructor:
+
+[`AbstractGeneticAlgorithm`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/algorithm/impl/AbstractGeneticAlgorithm.java)を拡張していることを示す．一般的な`S`は，アルゴリズムを操作する解のコードかを指定することを可能にし，解ける問題の種類と使用可能なオペレータを決定する．これはクラスコンストラクタで例証されている．
 
 ```java
  public NSGAII(Problem<S> problem, int maxIterations, int populationSize,
@@ -67,16 +71,17 @@ which indicates that it extends the [`AbstractGeneticAlgorithm`](https://github.
     this.evaluator = evaluator;
   }
 ```
-The constructor parameter contains:
 
-* The problem to solve.
-* The main algorithm parameters: the population size and the maximum number of iterations.
-* The genetic operators: crossover, mutation, and selection.
-* An [evaluator](https://github.com/jMetal/jMetalDocumentation/blob/master/evaluators.md) object to evaluate the solutions in the population.
+コンストラクタパラメータには次のものが含まれる．
 
-We can observe that all the parameters depend on `S`. This way, if `S` is instantiated e.g. to [`DoubleSolution`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/solution/DoubleSolution.java), then the problems to be solved must extend `Problem<DoubleSolution>` and all the operators must manipulate `DoubleSolution` objects. The interesting point of this approch is the compiler can ensure that there are no errors related with the application of wrong operators to a given solution.
+- 解決すべき問題
+- 主要なアルゴリズムパラメータ: 母集団のサイズと反復の最大回数
+- 遺伝子オペレータ: 交叉，突然変異，選択
+- 母集団内の解を評価するための[評価指標](./evaluators.md)オブジェクト
 
-The default `createInitialPopulation()` method adds a number of `populationSize` new solutions to a list:
+全てのパラメータは`S`に依存することがわかる．このようにして`S`がインスタンス化される場合，例えば[`DoubleSolution`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/solution/DoubleSolution.java)を拡張しなければならない問題は，`Problem<DoubleSolution>`を拡張しなければならず，全てのオペレータは`DoubleSolution`オブジェクトを操作しなければならない．このアプローチの興味深い点はコンパイラが誤ったオペレータを特定のソリューションに適用する際のエラーがないことを保証できることである．
+
+デフォルトの`createInitialPopulation()`メソッドはいくつかの`populationSize`新しい解をリストに追加する．
 
 ```java
   @Override protected List<S> createInitialPopulation() {
@@ -89,7 +94,7 @@ The default `createInitialPopulation()` method adds a number of `populationSize`
   }
 ```
 
-The evalution of lists of solutions are delegated to `Evaluator` objects, so the `evaluatePopulation()` method is very simple:
+解のリストの評価は`Evaluator`オブジェクトに委譲されるので，`evaluatePopulation()`メソッドは非常に簡単である．
 
 ```java
   @Override protected List<S> evaluatePopulation(List<S> population) {
@@ -99,7 +104,7 @@ The evalution of lists of solutions are delegated to `Evaluator` objects, so the
   }
 ```
 
-The NSGA-II implementation assumes that the stopping condition will be defined around a maximum number of iterations:
+NSGA-IIの実装では，停止条件は最大反復回数の周りに定義されると仮定している．
 
 ```java
   @Override protected boolean isStoppingConditionReached() {
@@ -107,7 +112,7 @@ The NSGA-II implementation assumes that the stopping condition will be defined a
   }
 ```
 
-so the `initProgress()` method initalizes the iteration counter (the initial value is 1 because it is assumed that the initial populatio has been already evaluated):
+なので，`initProgress()`メソッドは反復カウンタを初期化する．(初期値はすでに評価されているため，初期値は1である)
 
 ```java
   @Override protected void initProgress() {
@@ -115,7 +120,7 @@ so the `initProgress()` method initalizes the iteration counter (the initial val
   }
 ```
 
-and the `updateProgress()` method merely increments the counter:
+`updateProgress()`メソッドは単にカウンタをインクリメントする．
 
 ```java
   @Override protected void updateProgress() {
@@ -124,7 +129,7 @@ and the `updateProgress()` method merely increments the counter:
 
 ```
 
-Accordig to the EA template, the `Selection()` method must create a mating pool from the population, so it is implemented this way:
+EAテンプレートに合致するように`Selection()`メソッドは集団からの後輩プールを作成しなければならないので，以下のように実装される．
 
 ```java
   @Override protected List<S> selection(List<S> population) {
@@ -138,7 +143,7 @@ Accordig to the EA template, the `Selection()` method must create a mating pool 
   }
 ```
 
-and the `reproduction()` method applies the crossover and mutation operators to the mating population, leading to new individuals that are added to an offspring population:
+`reproduction()`メソッドは交叉と突然変異オペレータを交配プールを作成しなければならないので，以下のように実装される．
 
 ```java
   @Override protected List<S> reproduction(List<S> population) {
@@ -159,7 +164,8 @@ and the `reproduction()` method applies the crossover and mutation operators to 
     return offspringPopulation;
   }
 ```
-Finally, the `replacement()` method joins the current and offspring populations to produce the population of the next generation by applying the ranking and crowding distance selection:
+
+最後に，`replacement()`メソッドは現在と子孫の集団を結合して，次世代の集団を生成する．
 
 ```java
   @Override protected List<S> replacement(List<S> population, List<S> offspringPopulation) {
@@ -173,15 +179,15 @@ Finally, the `replacement()` method joins the current and offspring populations 
   }
 ```
 
-### Case study: Steady-state NSGA-II
-An advantage of using the EA template to implement NSGA-II is that it allows to simplify the implementation of variants of the algorithm. To give an example, we describe here the [SteadyStateNSGAII](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/nsgaii/SteadyStateNSGAII.java) class, which implements a steady-state version of NSGA-II. This version is basically NSGA-II but with an auxiliar population of size 1, so the `SteadyStateNSGAII` is an extension of class [`NSGAII`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/nsgaii/NSGAII.java):
+### Case study: Steady-state(定常状態) NSGA-II
+EAテンプレートを使用してNSGA-IIを実装する利点は，アルゴリズムのバリエーションの実装を簡素化できることである．ここでは，NSGA-IIの定常状態バージョンを実装する[SteadyStateNSGAII](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/nsgaii/SteadyStateNSGAII.java)クラスについて例を挙げて説明する．このバージョンは基本的にはNSGA-IIだが，サイズ1の人口が豊富なので，`SteadyStateNSGAII`は[`NSGAII`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/nsgaii/NSGAII.java)クラスの拡張である．
 
 ```java
 public class SteadyStateNSGAII<S extends Solution<?>> extends NSGAII<S> {
 }
 ```
 
-and the class constructor is similar to the one of NSGA-II:
+クラスコンストラクタはNSGA-IIのものに似ている．
 
 ``` java
   public SteadyStateNSGAII(Problem<S> problem, int maxIterations, int populationSize,
@@ -192,7 +198,7 @@ and the class constructor is similar to the one of NSGA-II:
   }
 ```
 
-The only differences between the two algorithm variants are in the `selection()` (the mating pool is composed of two parents) and `reproduction()`(only a child is generated) methods:
+2つのアルゴリズムバリエーションの唯一の違いは，`section()`(交配プールは2つの親からなる)と`reproduction()`(子のみが生成される)
 
 ```java
   @Override protected List<S> selection(List<S> population) {
@@ -220,10 +226,10 @@ The only differences between the two algorithm variants are in the `selection()`
   }
 ```
 
-This way, most of the code of the `NSGAII` class is reused and only two methods have had to be redefined.
+この方法では，`NSGA-II`クラスのコードの大部分が再利用され，2つのメソッドしか再定義されない．
 
-### Using the builder pattern to configure NSGA-II
-To configure the algorithms in jMetal 5 we have adopted the approach of using the builder pattern, which is represented by the [`AlgorithmBuilder`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/util/AlgorithmBuilder.java) interface:
+### Builderパターンを使用してNSGA-IIを構成する
+jMetal5でアルゴリズムを設定するために，[`AlgorithmBuilder`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/util/AlgorithmBuilder.java)インターフェースで表現されるbuilderパターンを使い方法を採用した．
 
 ```java
 /**
