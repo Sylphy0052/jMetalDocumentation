@@ -1,23 +1,24 @@
-## Algorithm templates
+## アルゴリズムテンプレート
+メタヒューリスティックなfamilyの大部分は，familyに属する全てのアルゴリズムによって共有される共通の行動によって特徴付けられる．この振る舞いは，特定のアルゴリズムを実装するために開始可能なテンプレートとして表現できる．ソフトウェアエンジニアリングの観点からは，振る舞いが基本テンプレートに含まれるアルゴリズムは，新しいテクニックのためのいくつかの特定のメソッドを実装する必要がある．共通の振る舞いをプログラムする必要がなくなるため，コードの複製が少なくなる．この制御の逆転は，jMetalの場合のように[software frameworks](https://en.wikipedia.org/wiki/Software_framework)の特性である．
 
-Most of metaheuristic families are characterized by a common behaviour which is shared by all the algorithms belonging to the family. This behaviour can be expressed as a template that can be instatiated to implement a particular algorithm. From a software engineering point of view, an algorithm whose behavior falls in a basic template would only require to implement some specific methods for the new technique; the common behavior would not be needed to be programmed, therefore resulting in less code replication. This inversion of control if a characteristic of [software frameworks](https://en.wikipedia.org/wiki/Software_framework), as is the case of jMetal.
+### 進化的アルゴリズムテンプレート
+進化的アルゴリズム(EAs)に関する多くの論文には，これに類似した擬似コードが含まれている．
 
-### The Evolutionary Algorithm Template
-Many papers about evolutionary algorithms (EAs) include a pseudo-code to describe them similar to this one:  
 ```
-P(0) ← GenerateInitialSolutions() 
+P(0) ← GenerateInitialSolutions()
 t ← 0
 Evaluate(P(0))
 while not StoppingCriterion() do
   P'(t) ← selection(P(t))
-  P''(t) ← Variation(P'(t)) 
+  P''(t) ← Variation(P'(t))
   Evaluate(P''(t))
-  P (t + 1) ← Update(P (t), P''(t)) 
+  P (t + 1) ← Update(P (t), P''(t))
   t←t+1
 end while
 ```
 
-To mimic this pseudo-code, jMetal 5 incorporates a template in the form of an abstract class named [`AbstractEvolutionaryAlgorithm`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/algorithm/impl/AbstractEvolutionaryAlgorithm.java), which contains the following code:
+この擬似コードを模倣するために，jMetal5は，[`AbstractEvolutionaryAlgorithm`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/algorithm/impl/AbstractEvolutionaryAlgorithm.java)という名前の抽象クラスの形式でテンプレートを組み込みます．このテンプレートには，次のコードが含まれている．
+
 ```java
 package org.uma.jmetal.algorithm.impl;
 
@@ -60,22 +61,25 @@ public abstract class AbstractEvolutionaryAlgorithm<S extends Solution<?>, R>  i
       updateProgress();
     }
   }
-}  
+}
 ```
-The generics in the class declaration indicate that an algorithm works with subclasses of the `Solution` interface (e.g., `DoubleSolution`, `BinarySolution`, and so on) and returns a result (typically, a single solution in the case of single-objective metaheuristics and a list of solutions in the case of multi-objective techniques). We can observe as the population is implemented a list of solutions.
 
-To develop an EA, all the abstract the methods used in the `run()` method must be implemented. We describe those methods next:
-* `createInitialPopulation()`: This method fills the population with a set of tentative solutions. The typical strategy consists in generating randomly initialized solutions, but any other approach can be applied.
-* `evaluatePopulation(population)`: All the solutions in the `population` argument are evaluated and a population, which can be the same one passed as a parameter or a new one, is returned as a result.
-* `initProgress()`: The progress of an EA is usually measured by counting iterations or function evaluations. This method initializes the progess counter.
-* `isStoppingConditionReached()`: the stopping condition establishes when the algorithm finishes its execution.
-* `selection(population)`: the selection method chooses a number of solutions from the population to become the mating pool.
-* `reproduction(matingPopulation)`: the solutions in the mating pool are manipulated somehow, by modifying them or by using them to create new ones, yielding to new solutions that constitute the offspring population.
-* `replacement(population, offspringPopulation)`: the population for the next generation is built from individuals of the current and the offspring populations.
-* `updateProgress()`: the counter of the progress of the algorithm (evaluations, iterations, or whatever) is updated.
+クラス宣言のジェネリクスはアルゴリズムが`Solution`インターフェース(例えば`DoubleSolution`，`BinarySolution`など)のサブクラスで動作し，結果を返すことを示している(通常，客観的なメタヒューリスティックスト多目的手法の場合の解決策のリスト)．人口が解決策のリストとして実装されているので，観察することができる．
 
-#### Genetic algorithms 
-If we are interested in implementing a genetic algorithm, a subfamily of EAs characterized by applying a selection operator and by using a crossover and a mutation operator for the reproduction step, a subclass of `AbstractEvolutionaryAlgorithm` called [AbstractGeneticAlgorithm](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/algorithm/impl/AbstractGeneticAlgorithm.java) is provided:
+EAを開発するには，`run()`メソッドで使用されている全ての抽象メソッドを実装する必要がある．次にこれらの方法について説明する．
+
+- `createInitialPopulation()`: この方法は人口を一連の暫定的な解で満たす．典型的な戦略は，ランダムに初期化された会を生成することにあるが，他の方法を適用することもできる
+- `evaluatePopulation(population)`: `population`引数の全ての解が評価され，パラメータまたは新しいものとして渡されたものと同じである可能性のある母集団が結果として返される
+- `initProgress()`: EAの進捗は，通常，反復または機能評価を数えることによって測定される．このメソッドは，Progessカウンタを初期化する．
+- `isStoppingConditionReached()`: アルゴリズムがその実行を終了するときに停止条件が成立する
+- `selection(population)`:選択方法は，集団から複数の会を選択して交配プールにする
+- `reproduction(matingPopulation)`: 交配プール内の解は，それらを改変するか，またはそれらを用いて新しいものを作成することによって，なんらかの形で操作され，子孫集団を構成する新しい解答に帰着する
+- `replacement(population, offspringPopulation)`: 次世代の人口は，現在の子孫と子孫の個体群から構成されている
+- `updateProgress()`: アルゴリズムの信仰のカウンター(評価，反復など)が更新される
+
+#### 遺伝的アルゴリズム
+選択オペレータを適用し，再生ステップに交叉と突然変異オペレータを使用することによって特徴付けられる遺伝的アルゴリズムを実装することに興味がある場合，`AbstractGeneticAlgorithm`と呼ばれる[AbstractGeneticAlgorithm](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/algorithm/impl/AbstractGeneticAlgorithm.java)のサブクラスが提供される．
+
 ```java
 package org.uma.jmetal.algorithm.impl;
 
@@ -88,10 +92,23 @@ public abstract class AbstractGeneticAlgorithm<S extends Solution<?>, Result> ex
   protected MutationOperator<S> mutationOperator ;
 }
 ```
-Popular metaheuristics such as [NSGA-II](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/nsgaii/NSGAII.java), [SPEA2](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/spea2/SPEA2.java), [PESA2](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/pesa2/PESA2.java), [MOCell](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/nsgaii/NSGAII.java) or [SMS-EMOA](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/smsemoa/SMSEMOA.java) are based on this template.
 
-#### Evolution strategies
-Another subfamily of EAs are evolution strategies, which are based on applying only mutation in the reproduction step. The corresponding abstract class for EAs is [`AbstractEvolutionStragegy`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/algorithm/impl/AbstractEvolutionStrategy.java):
+一般的なメタヒューリスティックの例
+
+- [NSGA-II](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/nsgaii/NSGAII.java)
+
+- [SPEA2](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/spea2/SPEA2.java)
+
+- [PESA2](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/pesa2/PESA2.java)
+
+- [MOCell](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/nsgaii/NSGAII.java)
+
+- [SMS-EMOA](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/smsemoa/SMSEMOA.java)
+
+これらはこのテンプレートに基づいている．
+
+#### 進化戦略
+EAのもう1つのサブfamilyは再生ステップにおいて突然変異のみを適用することに基づく進化戦略である．EAの対応する抽象クラスは[`AbstractEvolutionStragegy`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/algorithm/impl/AbstractEvolutionStrategy.java)である．
 
 ```java
 package org.uma.jmetal.algorithm.impl;
@@ -103,6 +120,7 @@ public abstract class AbstractEvolutionStrategy<S extends Solution<?>, Result> e
   protected MutationOperator<S> mutationOperator ;
 }
 ```
-The [PAES](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/paes/PAES.java) algorithm is based on this template
+
+[PAES](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/paes/PAES.java) アルゴリズムはこのテンプレートに基づいている
 
 TO BE COMPLETED
