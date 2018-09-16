@@ -1,11 +1,17 @@
-## Experimental studies
+## 実験的研究
 
-Since version 5.1, jMetal incorporates support for making experimental studies, i.e. configuring an experiment where a set of algorithms solve a number of problems and, as a result, a number of output files (latex tables, R scripts) are generated.
+バージョン5.1以降，jMetalは実験的研究，すなわち一連のアルゴリズムがいくつかの問題を解決し，結果としていくつかの出力ファイル(ラテックステーブル，Rスクリプト)が生成される実験を構成するためのサポートを組み込んでいる．
 
-Some examples of experimental studies are included in jMetal 5.2:
-* [NSGAIIStudy](https://github.com/jMetal/jMetal/blob/jmetal-5.2/jmetal-exec/src/main/java/org/uma/jmetal/experiment/NSGAIIStudy.java): four variants of NSGA-II (with different values of the polynomial mutation and SBX crossover distribution indexes) are tested to solve the five ZDT real-coded problems. The experiment carries out 25 inpendent runs per configuration and 8 cores are used.
-* [NSGAIIStudy2](https://github.com/jMetal/jMetal/blob/jmetal-5.2/jmetal-exec/src/main/java/org/uma/jmetal/experiment/NSGAIIStudy2.java): the same as before but it is assumed that the reference Pareto fronts are not known, so they are obtained from all the fronts obtained by all the algorithms per problem; the contributio of each algorithm to the reference is also computed (only for continuous problems)
-* [ZDTStudy](https://github.com/jMetal/jMetal/blob/jmetal-5.2/jmetal-exec/src/main/java/org/uma/jmetal/experiment/ZDTStudy.java): the same as `NSGAIIStudy` but three diffent algorithms are compared: NSGA-II, SPEA2 and SMPSO.
-* [ZDTStudy2](https://github.com/jMetal/jMetal/blob/jmetal-5.2/jmetal-exec/src/main/java/org/uma/jmetal/experiment/ZDTStudy2.java): the same as before, but the reference Pareto fronts are computed as in `NSGAIIStudy`.
-* [BinaryProblemsStudy](https://github.com/jMetal/jMetal/blob/jmetal-5.2/jmetal-exec/src/main/java/org/uma/jmetal/experiment/BinaryProblemsStudy.java): An example of experiment solving binary-coded problems.
-* [ZDTScalabilityIStudy](https://github.com/jMetal/jMetal/blob/jmetal-5.2/jmetal-exec/src/main/java/org/uma/jmetal/experiment/ZDTScalabilityIStudy.java): This is an example of how using several variants of same problem in an experimental study. Concretely, this study is about solving five variants of the ZDT1 problem, each of them having a different number of decision variables. 
+実験的研究のいくつかの例は，jMetal5.2:
+
+- [NSGAIIStudy](https://github.com/jMetal/jMetal/blob/jmetal-5.2/jmetal-exec/src/main/java/org/uma/jmetal/experiment/NSGAIIStudy.java): 5つのZDT実数符号化問題を解くために，NSGA-IIの4つの変数(polynomial mutationとSBX交叉分布指数の値が異なる)がテストされる．この実験では，コンフィギュレーションごとに25の独立した実行が行われ，8つのコアが使用されている．
+
+- [NSGAIIStudy2](https://github.com/jMetal/jMetal/blob/jmetal-5.2/jmetal-exec/src/main/java/org/uma/jmetal/experiment/NSGAIIStudy2.java): 以前と同じだが，参照パレートフロントは未知であると仮定されているため，問題ごとに全てのアルゴリズムによって得られた全てのfrontから得られる．各アルゴリズムの山椒への寄与も計算される(連続問題の場合のみ)．
+
+- [ZDTStudy](https://github.com/jMetal/jMetal/blob/jmetal-5.2/jmetal-exec/src/main/java/org/uma/jmetal/experiment/ZDTStudy.java): `NSGAIIStudy`と同じであるが，NSGA-II，SPEA2およびSMPSOの3つの異なるアルゴリズムが比較される
+
+- [ZDTStudy2](https://github.com/jMetal/jMetal/blob/jmetal-5.2/jmetal-exec/src/main/java/org/uma/jmetal/experiment/ZDTStudy2.java): 前と同じだが，山椒パレートフロントは`NSGAIIStudy`のように計算される
+
+- [BinaryProblemsStudy](https://github.com/jMetal/jMetal/blob/jmetal-5.2/jmetal-exec/src/main/java/org/uma/jmetal/experiment/BinaryProblemsStudy.java): バイナリコード化問題を解く実験の例
+
+- [ZDTScalabilityIStudy](https://github.com/jMetal/jMetal/blob/jmetal-5.2/jmetal-exec/src/main/java/org/uma/jmetal/experiment/ZDTScalabilityIStudy.java): これは実験的研究で同じ問題のいくつかの変数を使用する方法の例である．具体的には，この研究ではZDT1問題の5つの変数を解決することについて，それぞれが異なる決定変数の数を有することについて述べる
