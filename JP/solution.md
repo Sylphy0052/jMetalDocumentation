@@ -1,16 +1,14 @@
-## The `Solution` interface
+## `Solution`インターフェース
+メタヒューリスティックを使用するときに最初に取らなければならない決定の1つは解決すべき問題の暫定的解決策をどのように符号化または表現するかを定義することである．表現は問題に強く依存し，適用可能な演算(例えば，他の解との再結合，局所探索手段など)を決定する．したがって，特定の表現を選択することは，メタヒューリスティックの振る舞い，ひいては得られた結果の室に大きな影響を与える．
 
-One of the first decisions that have to be taken when using metaheuristics is to define how to encode
-or represent the tentative solutions of the problem to solve. Representation strongly depends on the
-problem and determines the operations (e.g., recombination with other solutions, local search procedures,
-etc.) that can be applied. Thus, selecting a specific representation has a great impact on the behavior
-of metaheuristics and, hence, in the quality of the obtained results.
+次の図は，jMetal5のSolutionを表すために使用される基本コンポーネントを示している．
 
-The following figure depicts the basic components that are used for representing solutions in jMetal 5:
-![The Solution Interface](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/jMetal5SolutionClassDiagram.png)
-where three representations are included: binary, real, and integer. By using this approach, many implementations can be provided for the same encoding, adding an extra degree of flexibility. The use of generics also allows that an attempt to incorrectly assign the value of a variable results in a compilation error, e.g., trying to assign to an int variable the variable value of a `DoubleSolution`.
+![The Solution Interface](./figures/jMetal5SolutionClassDiagram.png)
 
-The code of the `Solution` interface is shown next:
+バイナリー，リアル，および整数の3つの表現が含まれている．このアプローチを使用することにより，同じエンコーディングに対して多くの実装を提供することができ，柔軟性がさらに向上する．ジェネリックの使用はまた，変数の値を誤って割り当てようとすると，コンパイルエラーを引き起こす．例えば，`DoubleSolution`の変数値をint変数に代入しようとしている．
+
+次に，`Solution`インターフェースのコードを示す．
+
 ```java
 package org.uma.jmetal.solution;
 
@@ -32,10 +30,11 @@ public interface Solution<T> extends Serializable {
 }
 ```
 
-The interface has methods for accessing both the variables and the objectives of a solution, a copy method, and to methods for accessing solution atributes. 
+インターフェースには，ソリューションの変数と目的，コピー方法，およびソリューション属性にアクセスするためのメソッドの両方にアクセスするためのメソッドがある．
 
-### Defining encodings
-Defining a particular encoding implies implementing or extending the `Solution` interface. This way, the interfaces for solutions having a list of double and integer variables are defined as follows:
+### エンコーディングの定義
+特定のエンコーディングを定義することは，`Solution`インターフェースを実装または拡張することを意味する．このように，doubleおよびinteger変数のリストを持つ解のインターフェースは次のように定義される．
+
 ```java
 package org.uma.jmetal.solution;
 
@@ -44,17 +43,19 @@ public interface DoubleSolution extends Solution<Double> {
   public Double getUpperBound(int index) ;
 }
 ```
-```java 
+```java
 package org.uma.jmetal.solution;
 
 public interface IntegerSolution extends Solution<Integer> {
   public Integer getLowerBound(int index) ;
   public Integer getUpperBound(int index) ;
 }
-``` 
-These interfaces provide for getting the lower and upper bounds of the double and integer variables. The way of setting those values are left to the implementation classes.
+```
 
-In the case of a binary solution, the interface is: 
+これらのインターフェースは，doubleおよびinteger変数の下限および上限を取得する．これらの値を設定する方法は実装クラスに委ねられている．
+
+バイナリソシューションの場合，インターフェースは次のようになる．
+
 ```java
 import org.uma.jmetal.util.binarySet.BinarySet;
 
@@ -64,9 +65,10 @@ public interface BinarySolution extends Solution<BinarySet> {
 }
 ```
 
-assuming that we intend to represent a list of binary variables.
+バイナリ変数のリストを表現しようとしていると仮定する．
 
-The adopted approach allows to define encodings having mixed variables. For example, this interface defines solutions composed of lists of double and integer values:
+採用されたアプローチは，混合変数を有する符号化を定義することを可能にする．例えば，このインターフェースでは，double値とinteger値のリストで構成されるソリューションを定義する．
+
 ```java
 package org.uma.jmetal.solution;
 
@@ -77,8 +79,10 @@ public interface IntegerDoubleSolution extends Solution<Number> {
   public int getNumberOfDoubleVariables() ;
 }
 ```
-### Implementing solutions
-Once we have defined a set of interfaces for the different solutions, we provide default implementions to all of them. Our approach is to take as starting point an abstract class named `AbstractGenericSolution`:
+
+### Solutionの実装
+色々なソリューションのインターフェースを定義したら，それらの全てにデフォルトの実装を提供する．アプローチは`AbstractGenericSolution`という名前の抽象クラスを出発点として取ることである．
+
 ```java
 package org.uma.jmetal.solution.impl;
 
@@ -91,13 +95,14 @@ public abstract class AbstractGenericSolution<T, P extends Problem<?>> implement
   protected Map<Object, Object> attributes ;
   protected final JMetalRandom randomGenerator ;
 ```
-which contains an implementation to all the methods in `Solution`. This class is extended by all the solution implementations in jMetal 5: `DefaultBinarySolution`, `DefaultIntegerSolution`, `DefaultDoubleSolution`, `DefaultIntegerDoubleSolution`, `DefaultIntegerPermutationSolution`, and `DefaultDoubleBinarySolution`. 
 
-### Where are the populations?
+これは`Solution`の全てのメソッドに対する実装を含んでいる．このクラスは，`DefaultBinarySolution`, `DefaultIntegerSolution`, `DefaultDoubleSolution`, `DefaultIntegerDoubleSolution`, `DefaultIntegerPermutationSolution`, と `DefaultDoubleBinarySolution`の全てのソリューション実装によって拡張されている．
 
-In jMetal 5 there is not any class to represent the concept of population. Instead, a Java `List` of `Solution` objects is used.
+### Populationはどこに？
+jMetal5には`Population`の概念を表すクラスはない．代わりに，`Solution`オブジェクトのJavaの`List`オブジェクトが使用される．
 
-Some examples:
+例:
+
 ``` java
 /* A population of double solutions */
 List<DoubleSolution> doublePopulation ;
@@ -109,12 +114,13 @@ List<Solution<Double>> doublePopulation ;
 List<BinarySolucion> binaryPopulation ;
 ```
 
-An utility class called [`SolutionListUtils`](https://github.com/jMetal/jMetal/blob/master/jmetal-core/src/main/java/org/uma/jmetal/util/SolutionListUtils.java) offers a set of operations over solution lists, such as finding the best/worst solution, selecting solutions randomly, etc.
+[`SolutionListUtils`]（https://github.com/jMetal/jMetal/blob/master/jmetal-core/src/main/java/org/uma/jmetal/util/SolutionListUtils.java）と呼ばれるユーティリティクラスは、最適/最悪の解を見つける、ランダムに解を選択するなどの、解リストに対する操作の集合である．
 
-### Solution attributes
-The idea of incorporating attributes is to allow to add specific fields to solutions that are needed by some algorithms. For example, NSGA-II requires to rank the solutions and assign them the value of the crowding distance, while SPEA2 assigns a raw fitness to the solutions.
+### `Solution`の属性
+属性を組み込むという考え方は，いくつかのアルゴリズムで必要とされるソリューションに特定のフィールドを追加できるようにすることである．例えば，NSGA-IIでは，解をランク付けしてcrowding distanceの値を割り当てる必要がありますが，SPEA2では生の適性を解に割り当てる．
 
-The attributes manipulated directly, but we include also this utility interface:
+属性は直接操作されるが，このユーティリティインタフェースも含まれている．
+
 ```java
 package org.uma.jmetal.util.solutionattribute;
 /**
@@ -130,7 +136,8 @@ public interface SolutionAttribute <S extends Solution<?>, V> {
 }
 ```
 
-and a default implementation:
+デフォルト実装:
+
 ```java
 package org.uma.jmetal.util.solutionattribute.impl;
 
@@ -152,20 +159,23 @@ public class GenericSolutionAttribute <S extends Solution<?>, V> implements Solu
     return this.getClass() ;
   }
 }
-```
-Note that in the current implementation the `getAttributedID()` returns a class identifier. This means that we cannot have two different attributes of the same class. 
+```
 
-### Example of attribute: constraints
-Optimization problems can have side constraints, and this implies that evaluating a solution requires to compute the objective functions and also the constraints to apply some kind of constraint handling mechanism. In jMetal 5 solution attributes are used to incorporate constraint information into the solutions.
+現在の実装では，`getAttributeID()`はクラス識別子を返す．つまり，同じクラスの2つの異なる属性を持つことはできない．
 
-The default constraint handling mechanism in jMetal is the overall constraing violation scheme defined in NSGA-II, so the following class is provided:
+### 属性の例:constraints
+最適化問題には側面の制約がある．これは，解を評価するには，目的関数とある種の制約処理メカニズムを適用するための制約を計算する必要があることを意味する．jMetal5のソリューション属性は，制約情報をソリューションに組み込むために使用される．
+
+jMetalのデフォルトの制約処理メカニズムは，NSGA-IIで定義されている全体の制約違反スキームであるため，次のクラスが用意されている．
 
 ```java
 package org.uma.jmetal.util.solutionattribute.impl;
 public class OverallConstraintViolation<S extends Solution<?>> extends GenericSolutionAttribute<S, Double> {
 }
 ```
-It is an empty class extending `GenericSolutionAttribute` specifying a double value for the attribute. Typically, the constraints are evaluted in the class defining the problem as is shown in this example:
+
+`GenericSolutionAttribute`を拡張した空のクラスで，属性のdouble値を指定する．通常，千木の例に示すように，制約をクラス定義で評価する．
+
 ```java
 package org.uma.jmetal.problem.multiobjective;
 
@@ -213,12 +223,12 @@ public class Binh2 extends AbstractDoubleProblem implements ConstrainedProblem<D
     numberOfViolatedConstraints.setAttribute(solution, violatedConstraints);
   }
 ```
-This code includes also another attribute, called `NumberOfViolatedConstraints` that is used to set the number of violated constraints of a given solution.
 
-### Example of attribute: ranking
+このコードには，与えられた解の違反した制約の数を設定するために使用される`NumberOfViolatedConstraints`という別の属性も含まれている．
 
-The use of solution attributes can be encapsulated. As an example, we have defined the following interface to assign a
-rank to a solution (i.e, NSGA-II’s ranking):
+### 属性の例: ranking
+ソリューション属性の使用はカプセル化できる．一例として，ソリューションにランクを割り当てるためのインターフェース(NSGA-IIのランキング)を次のように定義した．
+
 ```java
 package org.uma.jmetal.util.solutionattribute;
 
@@ -236,9 +246,10 @@ public interface Ranking<S extends Solution<?>> extends SolutionAttribute<S, Int
 }
 ```
 
-so that a client class (e.g., the `NSGAII` class) can merely use:
+クライアントクラス(NSGAクラス)は，単に以下を使用することができる．
+
 ```java
 Ranking ranking = computeRanking(jointPopulation);
 ```
-This way, the solution attribute is managed internally by the class implementing the ranking and is hidden to the
-metaheuristic.
+
+このようにして，ソリューション属性はランキングを実装するクラスによって内部的に管理され，メタヒューリスティックに隠される．
