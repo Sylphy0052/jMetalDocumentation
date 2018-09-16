@@ -1,19 +1,20 @@
-# Measures
+# 測定
 
-A novelty in jMetal 5.0 is the inclusion of measures, which allows to obtain algorithm-specific information during its execution. The current implementation supports two types of measures: a `PullMeasure` provides the value of the measure on demand (synchronous), while a `PushMeasure` allows to register listeners (or observers) to receive the value of the measure when it is produced (asynchronous).
+jMetal5の新機能は，実行中にアルゴリズム固有の情報を得ることを可能にする手段の組み込みである．現在の実装では，`PullMeasure`はオンデマンドの測定値(同期)を提供し，`PushMeasure`は測定の値を受け取るためにリスナー(オブザーバー)を登録することを可能にする(非同期)．
 
-## What are measures?
+## 測定とは何か
+測定は実行中のアルゴリズムの特定のプロパティにアクセスするように設計されている．例えば，遺伝子アルゴリズムにおける現在の母集団のサイズ，粒子軍最適化における粒子の現在の速度，現在の反復などを知ることができる．アルゴリズムが有することができる多くの特性を適切に処理するために，2つの措置が提供されている．
 
-Measures are designed to access specific properties of a running algorithm. For instance, one could know the size of the current population in a genetic algorithm, the current velocity of the particles in a particle swarm optimization, the current iteration, etc. In order to deal properly with the many properties that an algorithm could have, two types of measures are provided.
+通常，プロパティは`getPopulationSize()`や`getCurrentIteration()`のようなgetterによってアクセスされる．これらのプロパティは同期的な方法でアクセスされる．つまり，ユーザーの要求に応じて取得及び処理を行う．この種の各プロパティは`PullMeasure.get()`メソッドに示すように，`PullMeasure`を通してアクセスすることができる．
 
-Usually, properties are accessed by getters, like `getPopulationSize()` or `getCurrentIteration()`. These properties are accessed in a synchronous way, which means that we obtain (and process) them on the user's demand. Each property of this kind can be accessed through a `PullMeasure`, as shows the `PullMeasure.get()` method:
 ```
 public interface PullMeasure<Value> extends Measure<Value> {
 	public Value get();
 }
 ```
 
-At the opposite, a `PushMeasure` allows to obtain the value of a property in an asynchronous way, which means that the value is provided upon generation, the user having no control on when such a value will be provided to him. This is achieved by using an [observer design pattern](https://en.wikipedia.org/wiki/Observer_pattern), such that the user registers one or several `MeasureListener` instances to receive and process the value when it is produced:
+反対に，`PushMeasure`は非同期的な方法でプロパティの値を取得することを可能にする．つまり，値が生成時に提供され，その値がいつユーザに提供されるかを制御することができない．これは，ユーザが1つまたは複数の`MeasureListener`インスタンスを登録して，値が生成された時に値を受け取って処理するように，[Observerのデザインパターン](https://en.wikipedia.org/wiki/Observer_pattern)を使用することによって実現される．
+
 ```
 public interface PushMeasure<Value> extends Measure<Value> {
 	public void register(MeasureListener<Value> listener);
@@ -25,11 +26,12 @@ public interface MeasureListener<Value> {
 }
 ```
 
-Some people could wonder why these interfaces only require *reading* methods: the `PullMeasure` does not provide a `set(value)` method to assign its value, and the `PushMeasure` does not provide some kind of `push(value)` method neither. This is because these interfaces are designed from a user perspective, not an algorithm designer perspective, and the user can only read these values, not write them. One could say that it makes the thing harder for the designer, but actually the designer needs to know exactly which implementation to use, because he is the one who know how the values will be provided. So if he uses an existing implementation, he should of course know the specific methods of this implementation, which can include methods to set/push his values. Only the user does not need to know about the specific implementation used by the measure, so he is the one who will have to deal with generic `PullMeasure` and `PushMeasure`. Moreover, while it is natural to think about these set and push methods, it is actually not the only way to implement these measures. For instance, the algorithm designer could use a field to store the value of a property, and the update of this property (and the related `PullMeasure`) will be done through this variable rather than through the call of some methods. More detailed explanations are provided in the section [*How to create measures?*](#how-to-create-measures).
+`PullMeasure`はその値を代入する`set(value)`メソッドを提供せず，`PushMeasure`はある種の`push(value)`メソッドを提供しない．どちらもこれは，これらのインターフェースがアルゴリズムデザイナーの視点ではなく，ユーザの視点から設計されており，ユーザはこれらの値を書き込むことができない．デザーナーの方が難しくなると言えるかもしれないが，デザイナーは実際にどのような実装を使用するのかを正確に知る必要がある．それは値の提供方法を知っているからである．したがって，既存の実装を使用する場合は，この実装の特定のメソッドを知っている必要がある．’このメソッドには，値をset/pushするメソッドが含まれている．ユーザだけがこの測定で使用される特定の実装について知る必要はないので，Genericの`PullMeasure`と`PushMeasure`を扱わなければならない．これらのsetとpushの方法について考えるのは当然ですが，実際にはこれらの方法を実装する唯一の方法ではない．例えば，アルゴリズムデザイナーはプロパティの値を格納するフィールドを使用することができ，このプロパティ(および関連する`PullMeasure`)の更新はいくつかのメソッドの呼び出しではなく，この変数を通じて行われる．より詳細な説明は[*How to create measures?*](#how-to-create-measures)セクションで提供されている．
 
-One could notice that both the measure interfaces extend `Measure`. This one is an empty interface which is used as a root interface to both `PullMeasure` and `PushMeasure`. By having it, we give the possibility for programers to manage measures in a generic way, without having to consider both types of measures separately nor to use `Object` to have them together. Thus, it is only here to simplify the use of measures for some highly generic cases in jMetal. No algorithm designer nor user should normally need it.
+両方の測定インターフェースが`Measure`を拡張することに気づくことができる．これは空のインターフェースで`PullMeasure`と`PushMeasure`の両方に対するルートインターフェースとして使われます．これを持つことで，両方のタイプの測定値を別々に考慮する必要もなく，それらを一緒に保つために`Object`を使用する必要もなく，一般的な方法で測定値を管理するプログラマの可能性を与える．したがって，ここではjMetalのいくつかの非常に一般的なケースの対策の使用を簡素化するだけである．アルゴリズム設計者もユーザも通常はそれを必要としない．
 
-Additionally to the measures themselves, jMetal 5 also provides the notion of `MeasureManager`, which deals with measures management features:
+また，測定に加えて、jMetal5は測定管理機能を扱う`MeasureManager`という概念も提供している．
+
 ```
 public interface MeasureManager {
 	public Collection<Object> getMeasureKeys();
@@ -37,33 +39,35 @@ public interface MeasureManager {
 	public <T> PushMeasure<T> getPushMeasure(Object key);
 }
 ```
-You can notice that we provide a method for each type rather than a generic method returning a `Measure`. This is because, as mentionned before, the `Measure` interface is empty, thus has no practical value. Moreover, when the user want to exploit a measure, he should know which type of measure is implemented to know how to interact with it. Rather than providing a `Measure` and arbitrarily cast it, we prefered to provide methods which directly provide the right type of measure. Notice that a measure instance can implement both interfaces (or two instances can be made available for the same property), so both methods can return an instance (same or not) for the same key, giving to the user the choice of using one way or another. In the case where only one is provided (the other being `null`), it is possible to complete it, as described in the [section dedicated to conversions](#conversions-pullmeasure---pushmeasure). The key identifies the specific property to measure and is algorithm-dependent, justifying the presence of an additional `getMeasureKeys()` for the user to retrieve them.
 
-Finally, in order for an algorithm to explicit that it provides measures, it should implement the `Measurable` interface, which simply requires to provide a `MeasureManager`:
+`Measure`を返すジェネリックメソッドではなく，各タイプに対してメソッドを提供している．これは，前述したように，`Measure`インターフェースが空であるため，実用的価値がないからである．さらに，ユーザがメジャーを利用したい場合，測定とどのように対話するかを知るために，どの測定のタイプが実装されているかを知る必要がある．`Measure`を提供し，それを任意にキャストするのではなく，適切なタイプの測定を直接提供するメソッドを提供することを推奨した．測定インスタンスは両方のインターフェイスを実装できる（または同じプロパティに対して2つのインスタンスを使用可能にすることができる）ので，両方のメソッドが同じキーに対してインスタンスを返すことができ，一方向または別のものの使用をユーザーが選択できる．1つだけが提供されている場合（もう1つが`null`の場合），[`変換専用セクション`](#conversions-pullmeasure---pushmeasure)で説明しているように，それを完了することができる．このキーは，測定する特定のプロパティを識別し，アルゴリズムに依存し，ユーザがそれらを取得するための追加の`getMeasureKeys()`の存在を正当化する．
+
+最後に，アルゴリズムが測定値を提供することを明示的に支持するためには，単に`MeasureManager`を提供する必要がある`Measurable`インターフェースを実装する必要がある．
+
 ```
 public interface Measurable {
 	public MeasureManager getMeasureManager();
 }
 ```
-So far, an `Algorithm` does not automatically implements `Measurable`, but it may change in future releases if we assess the relevance of the interface for a generic purpose.
+これまで，`Algorithm`は`Measurable`を自動的に実装しないが，一般的な目的のためにインターフェースの関連性を評価すると将来のリリースで変更されるかもしれない．
 
-One could wonder why we introduced the intermediary concept of `MeasureManager` rather than putting directly its methods into the `Measurable` interface. Indeed, by construction, the designer could simply decide to implement both the interfaces on the algorithm and implement `getMeasureManager()` by simply returning `this`, showing that we can artificially ignore the intermediary concept. Also, in the case where we actually reduce to the `Measurable` interface, the designer could add an intermediary objects which implements `Measurable` (so the methods of `MeasureManager`), and implement it also for the algorithm, but using his custom object in background. So technically, we see that introducing an intermediary notion of `MeasureManager` does not impose any constraint, justifying that we use the most simple design (no intermediary concept). Anyway, we made this design choice for the following reason: while the `MeasureManager` should focus on the measure management strategy, a `Measurable` should focus on which measures to provide. For instance, a `MeasureManager` could implement an advanced management strategy which, for measures implementing only one of the measure interfaces, would automatically instantiate a `PullMeasure`/`PushMeasure` in order to have all the features for each measure, with some smart inspection management for `PushMeasures` corresponding to `PullMeasures`. On the other hand, a `Measurable` instance, typically an algorithm, would focus on choosing which measures to provide and feeding them, delegating any measure management process to a dedicated `MeasureManager` implementation.
+`Measurable`インターフェースに直接そのメソッドを置くのではなく，`MeasureManager`の中間的概念を導入した．実際には構造家によってデザイナーは単にアルゴリズムの両方のインターフェースを実装し，単純に`this`を返すことによって`getMeasureManager()`を実装することで，中間的な概念を人為的に無視できることを示している．また，実際に`Measure`インターフェースに減らした場合，デザイナーは`Measurable`を実装する中間オブジェクト(MeasureManagerのメソッドなど)を追加してアルゴリズムように実装することもできるが，背景のオブジェクトにカスタムオブジェクトを使用する．技術的には，`MeasureManager`の中間概念を導入しても，最も単純な設計(中間概念なし)を使用していることを正当化する制約はない．とにかく，次の理由でこの設計を選択した．`MeasureManager`は対策マネジメント戦略に重点を置くべきだが，`Measurable`はどの対策を講じるべきかに焦点を当てるべきである．例えば，`MeasureManager`は測定インターフェースのうちの1つのみを実装する測定に対して，測定ごとに全ての特徴を持つために`PullMeasure/PushMeasure`を自動的にインスタンス化する高度な管理戦略を実装することができる．`PullMeasures`に対応する`PushMeasures`の検査管理を行う．一方，`Measurable`インスタンス(通常はアルゴリズム)は，提供する尺度を選択して供給することに重点を置き，尺度管理プロセスを専用の`MeasureManager`実装に委任する．
 
-## Why using measures?
+## なぜ測定を使用するのか
+通常，プロパティは`getPopulationSize()`や`getCurrentIteration()`のようなgetterによってアクセスされる．この設計の利点は，これらのプロパティに簡単にアクセスできる．しかし，現在の反復のように，時間の経過と共に進化する特性を読みたい時に，この設計の限界に直面している．実際このような設計では，これらのプロパティを定期的に読み取り，頻繁に全ての更新(*polling*,*spinning*,*busy-waiting*とも呼ばれる)を確認することがある．このような設計は遺伝的アルゴリズムの所与の反復においてどの個体が生成されたかのように，短期間の値にアクセスしたい場合に特に煩雑になる．これらのIndividual(個人)は通常次の反復で忘れられる(良いものだけが保持される)．したがって，頻繁なチェックが必要である．実行時にそのようなプロパティにアクセスするには，いくつかの`getGeneratedIndividuals()`メソッドを継続的に調べたり，生成された全てのデータを格納するために多くの領域を消費したり，`getGeneratedIndividuals(int iteration)`メソッドにアクセスする．
 
-Usually, properties are accessed by getters, like `getPopulationSize()` or `getCurrentIteration()`. The advantage of this design is that it gives a simple way to access these properties. However, we quickly face the limitations of this design when we want to read properties which evolve in time, like the current iteration. Indeed, such a design imposes to read these properties on a regular basis, sometime on a frequent basis to see all the updates (also called *polling*, *spinning*, or *busy-waiting*). Such a design becomes particularly cumbersome when we want to access short-term values, like which individuals have been generated at a given iteration of a genetic algorithm. These individuals are usually forgotten at the next iteration (only the good ones are kept), thus imposing a frequent check. Accessing such properties at runtime would require whether to consume a lot of computation time to continuously inspect some `getGeneratedIndividuals()` method, or to consume a lot of space to store all the data generated and access it through some `getGeneratedIndividuals(int iteration)` method.
+jMetal5で選択する設計は，Measureの概念に基づいており，さらにMeasurementsという概念は`PullMeasure`と`PushMeasure`の2つのカテゴリに分かれている．最も単純なもの，`PullMeasure`はgetterから簡単にアクセスできる最初の種類のプロパティ用に設計されている．単純にgetterを使うことができるが，`PullMeasure`はプロパティへより一般的なアクセスを提供し，一般的な評価をアルゴリズムに適用することができる(一般的な実験ではjMetal5ではまだ実装されていない)．もう1つのタイプの測定である`PushMeasure`は他の種類のプロパティ用に設計されている．getterを使って簡単に管理することはできず，アルゴリズムによってリアルタイムに提供(push)する必要がある．このような尺度を使用することにより，値を受信して処理することができ，更新を緩和することなく，継続的にプロパティを検査する必要はない．
 
-The design we choose for jMetal 5 is based on the notion of measure, which further split into two categories: `PullMeasure` and `PushMeasure`. The simplest one, the `PullMeasure`, is designed for the first kind of property, which can be easily accessed (pulled) from a getter. While one could simply use a getter, the `PullMeasure` provides a more generic access to the property, allowing to apply generic evaluations on the algorithm (like generic experiments, which are not yet available in jMetal 5.0). The other type of measure, the `PushMeasure`, is designed for the other kind of properties, which are not easily managed through getters and need to be provided (pushed) in real-time by the algorithm. By using such a measure, the values can be received and processed without risking to loose any update, and without the need to continuously inspect the property.
+これらの両方の手段を持つもう1つの利点は，重要な追加のリソースを必要とせずに簡単にアルゴリズムに結合できることである．実際には，反復カウンタのようにアルゴリズムを使用するために値を変数に格納する必要がある場合，N回の反復の後，そのような値は`PullMeasure`によってカバー(置き換え)することができる．反対に，値が生成されているが，アルゴリズムの実行中に格納されていない場合，`PushMeasure`を使用して潜在的なリスナーに値をPushし，それを忘れて，リスナーがこの値を保存するかさらに処理する必要があるかどうかをリスナーが判断できるようにする．消費される追加リソースは次のとおりである．
 
-Another advantage of having both these measures is that it can be easily integrated to an algorithm without requiring significant additional resources: indeed, for cases where a value have to be stored into a variable for the algorithm to use it, like an iteration counter to stop after N iterations, such a value can be covered (or replaced) by a `PullMeasure`. At the opposite, when a value is generated but not stored during the running of the algorithm, a `PushMeasure` can be used to push the value to any potential listener and forget about it, letting the listeners decide whether or not this value should be stored or further processed. The additional resources consumed are only:
-- the stored measures, which are often lightweight and less numerous than the solutions to store
-- the calls to the listeners of the `PushMeasures`, which are negligible if no listener is registered, otherwise fully controlled by the user (not by *a priori* decisions from the algorithm designer)
+- 格納された測定値は軽量であり，格納する解決策よりも少ないことが多い
+- リスナーが登録されていない場合に無視される`PushMeasures`のリスナーへの呼び出し，そうでなければユーザによって完全に制御される(アルゴリズム設計者の先験的な決定ではない)．
 
-## How to use measures?
+## 測定の使い方は?
+計測は特に使いやすいと定義されている．一方で`PullMeasure`は基本的にgetterのように扱うことができる．ここでは`getXxx()`を呼び出す代わりに`xxxMeasure.get()`を呼び出す．この結果，ユーザが必要とする時に直接`PullMeasure`を使用する．一方，`PushMeasure`はユーザにリスナーの登録と登録解除を許可するだけなので(通知生成はアルゴリズムの責任)，ユーザは処理がいつ行われるかを制御することができない．データが到着した時にデータを利用するためにプロセスをリスナーに配置するか，リスナーはその値を格納して処理する別のスレッドを置く必要がある．通知元(ここではアルゴリズム)がそのジョブを継続できるように，リスナーで費やされる時間を最小限に抑えることが一般的に推奨されている．
 
-Measures have been defined to be particularly easy to use. On one hand, a `PullMeasure` can be used basically like a getter, where instead of calling `getXxx()` we call `xxxMeasure.get()`. This results in using a `PullMeasure` directly when required by the user. On the other hand, because a `PushMeasure` only allows a user to register and unregister listeners (the notification generation is the responsibility of the algorithm), the user have no control on when the processing will occur: the process have to be put in the listener to exploit the data when it arrives, or the listener should store the value while letting another thread dealing with the processing. It is generally recommended to reduce the time spent in a listener to the minimum in order to let the source of the notification (the algorithm here) continues its job.
+言い換えれば，`PullMeasures`を使用するプロセスは，一般に，アルゴリズムが実行された後に測定値が使用される形式を持つべきである．
 
-In other words, a process using `PullMeasures` should generally have this form, where the measures are used once the algorithm is running:
 ```
 Algorithm<?> algorithm = new MyAlgorithm();
 
@@ -88,7 +92,8 @@ while (thread.isAlive()) {
 }
 ```
 
-At the opposite, a process using `PushMeasures` should generally have this form, where the process is setup before to run the algorithm:
+反対に，`PushMeasures`を使用するプロセスは，一般的に，アルゴリズムを実行する前にプロセスが設定されているこの形式をとるべきである．
+
 ```
 Algorithm<?> algorithm = new MyAlgorithm();
 
@@ -97,7 +102,7 @@ Algorithm<?> algorithm = new MyAlgorithm();
 MeasureManager measures = algorithm.getMeasureManager();
 PushMeasure<Object> pushMeasure = measures.getPushMeasure(key);
 pushMeasure.register(new MeasureListener<Object>() {
-	
+
 	@Override
 	public void measureGenerated(Object value) {
 		/* use the value */
@@ -118,33 +123,36 @@ while (thread.isAlive()) {
 }
 ```
 
-In the case where only `PushMeasures` are used, one could also remove all the `Thread` management and simply call `algorithm.run()` and wait for it to finish. All the processes setup via `PushMeasures` will occur automatically.
+`PushMeasures`だけが使用されている場合，`Thread`管理を全て削除して`algorithm.run()`を呼び出してそれが終了するのを待つこともできる．`PushMeasures`を介して設定された全てのプロセスが自動的に実行される．
 
-## How to create measures?
+## 測定の作成方法
 
-### Create a `PullMeasure`
+### `PullMeasure`を生成する
 
-Usually, one implements an algorithm by storing some values in dedicated public fields, so a user can retrieve them on the fly. A really common example is a population of solutions, that we can find in many algorithms managing several solutions at the same time, like a genetic algorithm. Some others prefer to use getters, like `getPopulation()`, to provide a read-only access (while the field can be changed by the external user). These fields and getters are the best candidates for `PullMeasures`, because they can be wrapped in a straightforward manner. For our population example:
+通常，専用public fieldにいくつかの値を格納することによってアルゴリズムを実装するので，ユーザはそれらを即座に取得できる．一般的な例は，遺伝的アルゴリズムのように，複数のソリューションを同時に管理する多くのアルゴリズムで見つけることができるソリューションの集まりです．他の人は，`getPopulation()`のようなgetterを使って読み取り専用アクセスを提供することを好む(フィールドは外部ユーザによって変更できる)．これらのフィールドとgetterは簡単な方法でラップすることができるため，`PullMeasures`の最良の候補である．Population(人口)の例
+
 ```
 PullMeasure<Collection<Path>> populationMeasure = new PullMeasure<Collection<Path>>() {
-	
+
 	@Override
 	public String getName() {
 		return "population";
 	}
-	
+
 	@Override
 	public String getDescription() {
 		return "The set of paths used so far.";
 	}
-	
+
 	@Override
 	public Collection<Path> get() {
 		return getPopulation();
 	}
 };
 ```
-The name and description are additional data to describe the measure itself, to know what it provides, and any measure should implement it, which makes the implementation of the interface quite heavy. However, this code can be reduced by using `SimplePullMeasure`, which takes the name and description in argument to focus on the value to retrieve:
+
+名前と説明は，計測自体を記述し，計測が何を提供しているかを知るための追加データであり，計測を実装する必要があるため，インターフェースの実装が非常の重くなる．しかし，このコードは`SimplePullMeasure`を使うことで減らすことができる．`SimplePullMeasure` は引数に名前と説明を取り，取り出したい値に注目する
+
 ```
 PullMeasure<Collection<Path>> populationMeasure
 = new SimplePullMeasure<Collection<Path>>("population",
@@ -156,7 +164,8 @@ PullMeasure<Collection<Path>> populationMeasure
 };
 ```
 
-If no getter is available, a field can also be used exactly the same way. These cases are the most basic uses of a `PullMeasure`. They are also the most common if you adapt an existing implementation to use the jMetal formalism. Indeed, using fields and getters is the simple way to provide an access to the internal data of an algorithm, which gives a lot of occasions to use `PullMeasures`. But these cases are not the only ones. Indeed, any computation can be defined in the `get()` method, which allows to add new measures even for inexistent fields and getters. For instance, assuming that the algorithm manages the time spent in some of its steps, it could store an internal `startTime` value which indicates when the algorithm have been started. From this variable, one could measure how long the algorithm has run:
+getterが使用できない場合，フィールドも全く同じ方法で使用できる．これらのケースは`PullMeasure`の最も基本的な使い方である．jMetal形式を使用するように既存の実装を適合させる場合も，最も一般的である．実際，フィールドやgetterを使うことはアルゴリズムの内部データへのアクセスを提供する簡単な方法であり，`PullMeasure`を使う機会がたくさんある．しかし，これらのケースだけではない．確かに，計算は`get()`メソッドで定義することができる．これは存在しないフィールドやgetterに対しても新しい測定を追加することを可能にする．例えば，アルゴリズムがそのステップのいくつかで費やされた時間を管理すると仮定すると，アルゴリズムがいつ開始されたかを示す内部`startTime`値を格納することができる．この変数から，アルゴリズム実行時間を測定できる．
+
 ```
 PullMeasure<Long> runningTimeMeasure
 = new SimplePullMeasure<Long>("running time",
@@ -167,9 +176,11 @@ PullMeasure<Long> runningTimeMeasure
 	}
 };
 ```
-The advantage of putting the computation directly into the `get()` method is that the value is computed only when requested. Thus, it is the responsibility of the external user to decide when it is worth to compute it.
 
-So far, we saw that a `PullMeasure` is basically used in the same way than a getter (we can also use a getter to make some computation). This is actually its principal purpose, but it does it in a standardised way: indeed, given that you have an algorithm which provides you some getters or equivalent, you can wrap all of them into `PullMeasures`, which gives you a unified way to access these values in a generic context (where you do not know which method to use nor how to use them, unless reflexion is used). Moreover, if you have an algorithm which provides a set of `PullMeasures`, you can extend them by creating new ones (while you cannot add getters nor fields to an instance):
+計算を`get()`メソッドに直接入れることの利点は，値が要求された時にだけ計算されることである．したがって，それを計算する価値があるかどうかを判断するのは外部ユーザの責任である．
+
+これまでのところ，`PullMeasure`はgetterと同じ方法で基本的に使用されることがわかった(getterを使用して計算を行うこともできる)．これは実際にその主要な目的だが，標準化された方法で行う．確かに，getterや同等のものを提供するアルゴリズムがあれば，それらを全て`PullMeasures`にラップすることができ，これは汎用コンテキストでこれらの値にアクセスする統一された方法を提供する(reflexionが使用されていない限り，使用する方法や使用方法がわからない場合)．さらに，`PullMeasures`のセットを提供するアルゴリズムがあれば，新しいインスタンスを作成することでインスタンスを拡張することができる(インスタンスにgetterやフィールドを追加することはできない)．
+
 ```
 PullMeasure<Integer> populationSizeMeasure
 = new SimplePullMeasure<Integer>("population size",
@@ -182,21 +193,24 @@ PullMeasure<Integer> populationSizeMeasure
 };
 ```
 
-With the ability to extend a set of measures, one can create the relevant measures for a specific experiments for instance (not yet implemented in jMetal 5.0). In other words, the algorithm designer can focus on providing a minimal set of measures and let the external user define new ones when required.
+一連の尺度を拡張することができるため，例えば特定の実験のための特定の実験のための適切な尺度を作成することができる(まだjMetal5では実装されていない)．言い換えれば，アルゴリズム設計者は最小限の測定値を提供することに焦点を当て，必要に応じて外部ユーザに新しいものを定義させることができる．
 
-Finally, additional facilities are provided by jMetal to simplify the creation of `PullMeasures`. We already mentionned the `SimplePullMeasure` which focuses on defining the `get()` method, but in the case where the measure wraps a field, one could prefer to use directly the measure instead of the field itself by using a `BasicMeasure`, which directly stores the value by defining an additional `set(value)` method. More specific measures are also defined, like the `CountingMeasure` which allows to count occurrences, typically like a number of iterations or a number of solutions generated, or the `DurationMeasure` to evaluate the time spent in some activities. Several implementations of `PullMeasure` also implement `PushMeasure`, thus allowing a high flexibility on their use. In the case where one want to add `PullMeasures` to an existing algorithm, it is also possible to use the `MeasureFactory` to facilitate the instantiation of several `PullMeasures` at once:
-- `createPullsFromFields(object)` instantiates a `PullMeasure` for each field of an object and returns a `Map` associating the name of each field to the corresponding measure,
-- `createPullsFromGetters(object)` instantiates a `PullMeasure` for each getter in a similar way.
+最後に`PullMeasures`の作成を単純化するために，jMetalによって追加の機能が提供されている．`get()`メソッドの定義に焦点を当てた`SimplePullMeasure`をすでに述べたが，測定がフィールドをラップする場合，`BasicMeasure`を使用することで，フィールド自体の代わりに測定を直接使用することができ，それは追加の`set(value)`メソッドを定義することによって値を直接格納する．発生をカウントすることを可能にする`CountingMeasure`のように，より具体的な尺度も定義され，典型的には多数の反復または生成された多数の会のように，いくつかのアクティビティで費やされた時間を評価するために`DurationMeasure`を使用する．`PullMeasure`のいくつかの実装も`PushMeasure`を実装している．その使用に高い柔軟性を与えることができる．既存のアルゴリズムに`PullMeasures`を追加したい場合には，同時にいくつかの`PullMeasures`のインスタンス化を容易にするために，`MeasureFactory`を使うことも可能である．
 
-### Create a `PushMeasure`
+- `createPullsFromFields(object)`: オブジェクトの各フィールドに対して`PullMeasure`をインスタンス化し，各フィールドの名前を対応する測定に関連づける`Map`を返す
+- `createPullsFromGetters(object)`: 同様の方法で各getterの`PullMeasure`をインスタンス化する
 
-A `PushMeasure` standardises the [observer design pattern](https://en.wikipedia.org/wiki/Observer_pattern) for algorithms. As an observer is supposed to be notified when the value it observes is updated, a `PushMeasure` notifies a listener (a broadly used term for observers in Java, especially in Swing) when a property of the algorithm changes. Noticeably, the interface `PushMeasure` is really reduced: it only requires the methods to add and remove listeners. Because of that, it is the responsibility of the measure implementer to decide how the listeners are notified. Several implementations are already provided in jMetal to simplify this work. In particular, probably most of the cases will find their way in using `SimplePushMeasure`, for instance if we want to notify when a new solution is generated:
+### `PushMeasure`の生成
+`PushMeasure`はアルゴリズムのための[Observerデザインパターン](https://en.wikipedia.org/wiki/Observer_pattern)を標準化する．オブザーバは観測値が更新された時に通知されるため，`PushMeasure`はアルゴリズムのプロパティが変更された時にリスナー(Javaのオブザーバ，特にSwing)に通知する．明らかにインターフェース`PushMeasure`は実際には減少している．リスなを追加したり削除したりするメソッドだけが必要である．そのため，リスナーに通知する方法を決定するのは，測定実装者の責任である．この作業を簡素化するため，いくつかの実装がすでにjMetalに用意されている．特に，新しい解決策がいつ生成されるかを通知したい場合など，大部分のケースではおそらく`SimplePushMeasure`の使用方法を見つけるだろう．
+
 ```
 SimplePushMeasure<MySolution> lastGeneratedSolution = new SimplePushMeasure<>(
 		"last solution",
 		"The last solution generated during the running of the algorithm.");
 ```
-At the opposite of a passive `PullMeasure` (this is the user who decides when to call it), a `PushMeasure` is an active measure, in the sense that it is a particular event occuring during the run of the algorithm which triggers the notification process. For our example of last generated solution, we could have a basic hill-climbing method which starts from a random solution and then creates mutants to iteratively improve it. These random and mutant generations are the two relevant events in the algorithm for using our measure:
+
+受動的な`PullMeasure`(これはいつ呼び出すのか決めるユーザ)とは反対に，`PushMeasure`はアクティブな手段であり，通知プロセスを鳥がするアルゴリズムの実行中に発生する特定のイベントである．最後に生成されたソリューションの例については，ランダムな会から始まり，それを反復的に改良するための突然変異を作成する基本的な山登り法を持つことができる．これらのランダムおよび突然変異世代は，測定値を使用するためのアルゴリズムにおける2つの関連イベントである．
+
 ```
 MySolution best = createRandomSolution();
 lastGeneratedSolution.push(best);
@@ -204,26 +218,26 @@ lastGeneratedSolution.push(best);
 while (running) {
 	MySolution mutant = createMutantSolutionFrom(best);
 	lastGeneratedSolution.push(mutant);
-	
+
 	// ...
 	// remaining of the loop
 	// ...
 }
 ```
 
-This example is illustrative in two ways: first, there can have *several* events to consider for a single measure, and second, the notification process should be done *as soon as* the event has occurred. This implies that a `PushMeasure` is generally deeply involved in the code of the algorithm itself, at the opposite of a `PullMeasure` which can wrap a field or a getter method, letting the algorithm itself untouched. Moreover, it also means that some extra computation time is consumed each time such a relevant event occurs. Because of that, a `PushMeasure` is well suited for notifying about a result *already computed* (because the algorithm need it) rather than to compute extra data for the sole purpose of measuring some properties. For an extra computation, it is wiser to exploit both a `PushMeasure`, to notify about the *already* computed stuff which serves as a basis for the extra computation (if any), with an additional `PullMeasure`, which will make the extra computation only if requested by the user.
+この例は2つの方法で説明されている．第一に，単一の尺度のために考慮すべきいくつかのイベントを有することができ，イベントが発生するとすぐに通知プロセスを完了させる必要がある．これは一般に，`PushMeasure`がアルゴリズム自体のコードに深く関与していることを意味し，フィールドまたはgetterメソッドをラップすることができる`PullMeasure`の反対側で，アルゴリズムそのものを手放す．さらに，このような関連イベントが発生するたびに，余分な計算時間が消費されることも意味する．そのための，`PushMeasure`はいくつかのプロパティを測定する唯一の目的のために余分なデータを計算するのではなく，すでに計算された結果について通知するのに適している(アルゴリズムが必要なため)．余分な計算のために，`PushMeasure`と`PushMeasure`の両方を利用する方が賢明であり，余分な計算の基礎となるすでに計算されたものについて(もしあれば)追加の`PullMeasure`を使って通知し，これはユーザによって要求された場合にのみ余分な計算を行う．
 
-Several implementations provided by jMetal already implement the `PushMeasure` interface. We already saw the `SimplePushMeasure`, which should be sufficient for many cases, but one can also notice the `CountingMeasure`, which allows to count the events (the value notified is an integer incremented at each notification). This implementation is for instance well suited for notifying the start/end of an iteration or how many solutions have been generated so far. It also implements the `PullMeasure` interface, allowing to retrieve the last value notified on demand.
+jMetalによって提供されるいくつかの実装は，すでに`PushMeasure`インターフェースを実装している．多くの場合には十分なはずの`SimplePushMeasure`がすでに見えたが，イベントをカウントできる`CountingMeasure`が通知されている(通知される値は通知ごとにインクリメントされる)．この実装は，反復の開始/終了，またはこれまでに生成された解決策の数を通知するのに適している．`PullMeasure`インターフェースも実装されており，必要に応じて通知された最後の値を取得できる．
 
-### Conversions `PullMeasure` <-> `PushMeasure`
+### `PullMeasure`と`PushMeasure`の変換
+いくつかの尺度は，`PullMeasure`と`PushMeasure`の両方を実装するが，単一の実装が実装されている場合，それを補完する別の尺度を作成することが可能である．これは双方向の変換を提供する`MeasureFactory`を使うことで実現できる．
 
-Some measures implement both `PullMeasure` and `PushMeasure`, but in the case where a single one is implemented, it is still possible to create another measure to complement it. This can be achieved by using the `MeasureFactory`, which provides conversions in both directions:
-- `createPullFromPush(push, initialValue)` creates a `PullMeasure` from a `PushMeasure`. Every time the initial `PushMeasure` notifies its listeners, the `PullMeasure` is updated and stores the value for future calls of its `get()`. The `initialValue` provided to the method tells which value to use before the next notification occurs (typically `null` or the actual value if it is known).
-- `createPushFromPull(pull, period)` creates a `PushMeasure` from a `PullMeasure`. Because there is no particular event produced by a `PullMeasure`, we artificially poll it (frequently check its value) at the given `period` to see when it changes. Identifying a change will result in generating a notification from the created `PushMeasure`. A short `period` offers a better reactivity but increases the computation cost, explaining why this method should not be used unless it is necessary. This is also why it is generally preferable, when it is possible to choose, to setup a `PushMeasure` rather than a `PullMeasure`: the conversion costs way less in that direction.
+- `createPullFromPush(push, initialValue)`は`PushMeasure`から`PullMeasure`を作成する．最初の`PushMeasure`がリスナーに通知するたびに`PullMeasure`が更新され，`get()`の将来の呼び出しのための値が保存される．メソッドに提供される`initialValue`は次の通知が発生する前にどの値を使用するかを指示する(通常はNullまたは実際の値)．
+- `createPushFromPull(pull, period)`は`PullMeasure`から`PushMeasure`を作成する．`PullMeasure`によって生成される特別なイベントがないので，与えられた`period`で人為的にポーリング(値を頻繁にチェック)し，いつ変化するかを確認する．変更を特定すると，作成された`PushMeasure`から通知が生成される．短い`period`はより良い反応性を提供するが，計算コストを増加させ，なぜこの方法が必要でない限り使用されるべきではないかを説明する．これは`PullMeasure`ではなく，`PushMeasure`を設定することが一般的には選択可能であることが望ましいからである．その方向への変換コストはそれほど高くない．
 
-### Add measures to an algorithm
+### アルゴリズムに測定を追加
+アルゴリズムが測定値を提供するためには，`Measurable`インターフェースを実装する必要がある．このインターフェースは`MeasureManager`を提供するように要求する．このマネージャはアルゴリズムの全ての測定へのアクセスを格納し，与えるものである．一方，独自のマネージャを実装することができるが，jMetalはすでに以下のメソッドを提供する`SimpleMeasureManager`実装を提供している．
 
-In order for an algorithm to provide measures, it should implement the `Measurable` interface, which asks to provide a `MeasureManager`. This manager is the one storing and giving access to all the measures of the algorithm. While one can implement his own manager, jMetal already provide the `SimpleMeasureManager` implementation which provides the following methods:
 ```
 public class SimpleMeasureManager implements MeasureManager {
 
@@ -231,7 +245,7 @@ public class SimpleMeasureManager implements MeasureManager {
 	public void setPullMeasure(Object key, PullMeasure<?> measure) {...}
 	public <T> PullMeasure<T> getPullMeasure(Object key) {...}
 	public void removePullMeasure(Object key) {...}
-	
+
 	// Methods to configure the PushMeasures
 	public void setPushMeasure(Object key, PushMeasure<?> measure) {...}
 	public <T> PushMeasure<T> getPushMeasure(Object key) {...}
@@ -242,12 +256,12 @@ public class SimpleMeasureManager implements MeasureManager {
 	public void removeMeasure(Object key) {...}
 	public void setAllMeasures(Map<? extends Object, ? extends Measure<?>> measures) {...}
 	public void removeAllMeasures(Iterable<? extends Object> keys) {...}
-	
+
 	// Provide the keys of the configured measures
 	public Collection<Object> getMeasureKeys() {...}
 }
 ```
 
-While there is the basic, type-specific methods, there is also generic methods which automatically recognize the type of the measure provided, and apply the corresponding type-specific methods. Measures which implement both `PullMeasure` and `PushMeasure` are also recognized and added both as a `PullMeasure` and a `PushMeasure`, so calling `getPullMeasure(key)` and `getPushMeasure(key)` with the same `key` will return the same measure. The generic methods also provide a massive configuration feature by managing several keys and measures at once.
+タイプ固有の基本的なメソッドがあるが，提供される測定のタイプを自動的に認識し，対応するタイプ固有のメソッドを適用する汎用メソッドもある．`PullMeasure`と`PushMeasure`の両方を実装する測定も認識され，`PullMeasure`と`PushMeasure`の両方として追加されるので，同じ`key`で`getPullMeasure(key)`と`getPushMeasure(key)`を呼び出し，同じ尺度を返す．Genericメソッドは一度にいくつかのキーと測定を管理することで大規模な設定機能も提供する．
 
-It is worth noting that, if an instance of a *non-jMetal* algorithm is provided, one can easily try to retrieve some measures from it by using `MeasureFactory.createPullsFromFields(object)` and `MeasureFactory.createPullsFromGetters(object)`. The maps returned by these two methods can then be provided to `SimpleMeasureManager.setAllMeasures(measures)` to have a fully featured, ready to use `MeasureManager`, without knowing anything about the actual algorithm. Given that we know how to run it, it is then possible to run it in a dedicated thread, as described in the section [*How to use measures?*](#how-to-use-measures), and to exploit the available measures to obtain some information about the algorithm. However, as underlined in the section [*Conversions `PullMeasure` <-> `PushMeasure`*](#conversions-pullmeasure---pushmeasure), it is costly to make `PushMeasures` from `PullMeasures`, while the reverse is quite cheap. Thus, although it can be tempting to simply implement an algorithm independently of jMetal and use this procedure to obtain a set of `PullMeasures`, someone designing an algorithm with the possibility to use the formalism of jMetal should focus on `PushMeasures` (or a combination of both) to retrieve more information in a more optimized way.
+非jMetalアルゴリズムのインスタンスが提供されている場合，`MeasureFactory.createPullsFromFields(object)`と`MeasureFactory.createPullsFromGetters(object)`を使って簡単にいくつかの測定を取得することができる．これらの2つのメソッドによって返されたマップは，`SimpleMeasureManager.setAllMeasures(measure)`に提供され，実際のアルゴリズムについて何も知らずに，完全に機能し，`MeasureManager`を使用できるようになる．実行方法はわかっているので，[*How to use measures?*](#how-to-use-measures)説で説明しているように，専用のスレッドで実行することができる．アルゴリズムに関する情報を入手するための利用可能な手段である．しかし，[*Conversions `PullMeasure` <-> `PushMeasure`*](#conversions-pullmeasure---pushmeasure)節に書かれているように，`PullMeasures`から`PushMeasures`を作るのはコストがかかるが，逆はコストが安い．したがって，jMetalとは独立したアルゴリズムを単純に実装し，このプロシージャを使用して一連の`PullMeasures`を取得することができるが，jMetalの形式を使用する可能性のあるアルゴリズムを設計する人は，`PushMeasures`(または両方の組み合わせ)より多くの情報をより最適な方法で検索することができる．
