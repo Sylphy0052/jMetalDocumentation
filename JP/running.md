@@ -29,7 +29,7 @@ public class NSGAIIRunner extends AbstractAlgorithmRunner {
   public static void main(String[] args) throws JMetalException, FileNotFoundException {
 ```
 
-mainメソッドの最初の部分は，解決する問題のタイプ(この例は`DoubleSolution`個体を扱う問題)と演算子を宣言する．`referenceParetoFront`はオプションの参照フロントの名前を示すのに使用される．
+mainメソッドの最初の部分は，解決する問題のタイプ(この例は`DoubleSolution`個体を扱う問題)とオペレータを宣言する．`referenceParetoFront`はオプションの参照フロントの名前を示すのに使用される．
 
 ```java
     Problem<DoubleSolution> problem;
@@ -60,7 +60,7 @@ mainメソッドの最初の部分は，解決する問題のタイプ(この例
     problem = ProblemUtils.<DoubleSolution> loadProblem(problemName);
 ```
 
-次に演算子とアルゴリズムを構成する．
+次にオペレータとアルゴリズムを構成する．
 
 ```java
     double crossoverProbability = 0.9 ;
