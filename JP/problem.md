@@ -1,5 +1,5 @@
-## The `Problem` interface
-To include a problem in jMetal, it must implement the `Problem` interface:
+## `Problem`インターフェース
+jMetalにProblemを含めるには，`Problem`インターフェースを実装する必要がある．
 
 ```java
 package org.uma.jmetal.problem;
@@ -23,9 +23,9 @@ public interface Problem<S extends Solution<?>> extends Serializable {
   public S createSolution() ;
 ```
 
-Every problem is characterized by the number of decision variables, the number of objective functions and the number of constraints, so getter methods for returning those values have to be defined. The genetic type `S` allows to determine the encoding of the solutions of the problem. This way, a problem must include a method for evaluating any solution of class `S` as well as providing a `createSolution()` method for creating a new solution. 
+全ての問題は決定変数の数，目的関数の数及び制約の数によって特徴付けられるため，それらの値を返すためのGetterメソッドを定義する必要がある．遺伝型`S`は，問題の解の符号化を決定することを可能にする．このように，問題にはクラス`S`の任意の解を評価する方法と，新しい解を作成するための`createSolution()`メソッドを提供する必要がある．
 
-The `Solution` interface is generic, so jMetal 5 has a number of interfaces extending it to represent double (i.e., continous) problems, binary problems, etc. This way, the [`DoubleProblem`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/problem/DoubleProblem.java) interface is defined in this way:
+`Solution`インターフェースは汎用的なものであるため，jMetal5にはDouble(連続的な)問題やバイナリ問題などを表現するためにいくつかのインターフェースがある．このように[`DoubleProblem`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/problem/DoubleProblem.java)インターフェースは以下のように定義されている．
 
 ```java
 package org.uma.jmetal.problem;
@@ -40,7 +40,9 @@ public interface DoubleProblem extends Problem<DoubleSolution> {
   Double getUpperBound(int index) ;
 }
 ```
-Problems implementing `DoubleProblem` only accept `DoubleSolution` objects, and methods for getting the lower and upper limits of each variable have to be implemented. jMetal 5 provides a default abstract class that implements `DoubleProblem` called [`AbstractDoubleProblem`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/problem/impl/AbstractDoubleProblem.java):
+
+`DoubleProblem`を実装する際の問題は，`DoubleSolution`オブジェクトだけを受け付け，各変数の上限と下限を得るメソッドを実装する必要がある．jMetal5は[`AbstractDoubleProblem`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/problem/impl/AbstractDoubleProblem.java)と呼ばれる`DoubleProblem`を実装するデフォルト抽象クラスを提供する．
+
 ```java
 package org.uma.jmetal.problem.impl;
 
@@ -77,7 +79,8 @@ public abstract class AbstractDoubleProblem extends AbstractGenericProblem<Doubl
 }
 ```
 
-As an example of double problem, we include next the implementation of the known [`Kursawe`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-problem/src/main/java/org/uma/jmetal/problem/multiobjective/Kursawe.java) problem:
+Double Problemの例として，次に既知の[`Kursawe`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-problem/src/main/java/org/uma/jmetal/problem/multiobjective/Kursawe.java)の実装を含める．
+
 ```java
 package org.uma.jmetal.problem.multiobjective;
 
@@ -148,13 +151,14 @@ public class Kursawe extends AbstractDoubleProblem {
 }
 ```
 
-Similarly to the `DoubleProblem` interface and `AbstractDoubleProblem`, we can found `BinaryProblem` and `AbstractBinaryProblem`, `IntegerProblem` and `AbstractIntegerProblem`, etc. The packages related to defining and implementing problems are:
-* [`org.uma.jmetal.problem` (module `jmetal-core`)](https://github.com/jMetal/jMetal/tree/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/problem): Interface definitions.
-* [`org.uma.jmetal.problem.impl` (module `jmetal-core`)](https://github.com/jMetal/jMetal/tree/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/problem/impl): Default implementations.
-* [`org.uma.jmetal.problem` (module `jmetal-problem`)](https://github.com/jMetal/jMetal/tree/jmetal-5.0/jmetal-problem/src/main/java/org/uma/jmetal/problem): Implemented problems.
+`DoubleProblem`インターフェースと`AbstractDoubleProblem`と同様に，`BinaryProblem`と`AbstractBinaryProblem`，`IntegerProblem`と`AbstractIntegerProblem`などがある．問題の定義と実装に関連するパッケージは次のとおりである．
 
-### Constrained problems
-There are two ways of dealing with constrained problems in jMetal 5. The first choice is to include the code to deal with constraint violation in the `evaluate()` method; the second one is to implement the [`ConstrainedProblem`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/problem/ConstrainedProblem.java) interface which includes a method for evaluating constraints:
+- [`org.uma.jmetal.problem` (module `jmetal-core`)](https://github.com/jMetal/jMetal/tree/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/problem): Interface定義.
+- [`org.uma.jmetal.problem.impl` (module `jmetal-core`)](https://github.com/jMetal/jMetal/tree/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/problem/impl): デフォルトの実装.
+- [`org.uma.jmetal.problem` (module `jmetal-problem`)](https://github.com/jMetal/jMetal/tree/jmetal-5.0/jmetal-problem/src/main/java/org/uma/jmetal/problem): 実装された問題.
+
+### 制約された問題
+jMetal5で制約された問題を処理するには，2つの方法がある．最初の選択は，`evaluate()`メソッドで制約違反を処理するコードを含めることである．2番目の選択は制約を評価するためのメソッドを含む[`ConstrainedProblem`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/problem/ConstrainedProblem.java)インターフェースを実装することである．
 
 ```java
 package org.uma.jmetal.problem;
@@ -168,12 +172,14 @@ public interface ConstrainedProblem<S extends Solution<?>> extends Problem<S> {
 
  /* Getters */
   public int getNumberOfConstraints() ;
-	
+
   /* Methods */
   public void evaluateConstraints(S solution) ;
 }
 ```
-In jMetal 5 the default approach is the second one. The following code contains the implementation of the [`Tanaka`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-problem/src/main/java/org/uma/jmetal/problem/multiobjective/Tanaka.java) problem, which has two constraints:
+
+jMetal5ではデフォルトのアプローチは２番目のアプローチである．次のコードには，[`Tanaka`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-problem/src/main/java/org/uma/jmetal/problem/multiobjective/Tanaka.java)問題の実装が含まれている．これには2つの制約がある．
+
 ```java
 package org.uma.jmetal.problem.multiobjective;
 
@@ -241,10 +247,12 @@ public class Tanaka extends AbstractDoubleProblem implements ConstrainedProblem<
 }
 
 ```
-### Discusion
-The inclusion of the `ConstrainedProblem` interface was motivated by the former jMetal versions, where every problem had the `evaluate()` and `evaluateConstraints()` methods. In the case of a non-constrained problem, `evaluateConstraints()` was implemented as an empty method. To avoid this violation of the [Interface Segregation Principle](https://en.wikipedia.org/wiki/Interface_segregation_principle), in jMetal 5 only those problems having side constraints need to evaluate constraints.
 
-In the original jMetal, evaluating a solution needed two sentences:
+### Discusion
+`ConstrainedProblem`インターフェースを組み込むことは，全ての問題が`evaluate()`と`evalutateConstraints()`メソッドを持っていた以前のjMetalバージョンによって動機付けられた．制限されていない問題の場合，`evaluateConstraints()`は空のメソッドとして実装された．[`インターフェース分離原理(Interface Principle)`](https://en.wikipedia.org/wiki/Interface_segregation_principle)のこの違反を回避するために，サイドメトリック制約(side constraints)を有する問題のみが制約を評価する必要がある．
+
+元のjMetalでは，解決策を評価するには2つの文が必要である．
+
 ```java
 Problem problem ;
 Solution solution ;
@@ -253,7 +261,8 @@ problem.evaluate(solution) ;
 problem.evaluateContraints(solution) ;
 ```
 
-Now a check has to be included to determine whether a problem has constraints or not:
+問題に制約があるかどうかを判断するためのチェックが含まれていなければならない．
+
 ```java
 DoubleProblem problem ;
 DoubleSolution solution ;
