@@ -1,8 +1,8 @@
-## Quality indicators
+## 品質インジケータ
 
-Quality indicators are considered in jMetal 5 as components of the core package (`jmetal-core`). As many other components, there is a generic interface and an `impl` package containing the provided implementations of that interface.
+品質指標は，コアパッケージのコンポーネント(jmetal-core)としてjMetal5で考慮されている．他の多くのコンポーネントと同様に，汎用インターフェースと，そのインターフェースの提供された実装を含む`impl`パッケージがある．
 
-The `QualityIndicator` interface is very simple:
+`QualityIndicator`インターフェースは非常に単純である．
 
 ```java
 package org.uma.jmetal.qualityindicator;
@@ -19,28 +19,31 @@ public interface QualityIndicator<Evaluate, Result> extends DescribedEntity {
 }
 ```
 
-The idea is than every quality indicator is applied to some entity (`Evaluate`) to be evaluated, and it returns a `Result`. The use of generics allows to represent indicators returning anything, from a double value (the most usual return type) to a pair of values as in the case of our implementation of Set Coverage. The quality indicators also has an associated name.
+アイデアは全ての品質インジケータが評価されるいくつかのエンティティ(`Evaluate`)に適用され，`Result`を返す．Genericの使用はSet Converageの実装の場合のように，Double value(最も普通の戻り値型)から値のペアまで，何かを返すインジケータを表すことができる．品質インジケータには，関連する名前もある．
 
-### Auxiliary classes
-Before describing how quality indicators are implemented, we must comment before a number of auxiliary classes that are used:
-* The [`Front`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/util/front/Front.java) interface and [`ArrayFront`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/util/front/imp/ArrayFront.java) class: Frequently, a reference Pareto front is stored in a file containing the objective values of a number of solutions. A `Front` is an entity intended to store the contents of these files; in the case of the `ArrayFront` class, it stores the front into an array of points.
-* The [`FrontNormalizer`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/util/front/util/FrontNormalizer.java) class: many indicators normalize the list of solutions to be evaluated, and this class is intended to do this: given a reference front or the maximum and minimum values, it returns a normalized list of solutions.
+### 補助クラス
+品質インジケータの実装方法を説明する前に，使用するいくつかの補助クラスの前にコメントする必要がある．
 
-### An example of indicator: Epsilon
+- [`Front`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/util/front/Front.java)インターフェースと[`ArrayFront`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/util/front/imp/ArrayFront.java)クラス: 頻繁に，山椒パレートフロントは，いくつかの会の客観的な値を含むファイルに格納される．`Front`はこれらのファイルの内容を格納することを意図したエンティティである．`ArrayFront`クラスの場合，フロントは天の配列に格納される．
+- [`FrontNormalizer`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/util/front/util/FrontNormalizer.java)クラス: 多くの指標が評価対象の解のリストを正規化する．このクラスはこれを行うことを意図している．参照の先頭，または最大値と最小値を指定すると，正規化された会のリストを返す．
 
-To illustrate a quality indicator in jMetal 5, we describe next the code of the Epsilon indicator.
+### インジケータの例: Epsilon
+jMetal5の品質インジケータを説明するために，次にEpsilonインジケータのコードを説明する．
 
-The declaration of the Epsilon class is included in this piece of code: 
+Epsilonクラスの宣言は次のコードに含まれている．
+
 ```java
 public class Epsilon<Evaluate extends List<? extends Solution<?>>>
     extends SimpleDescribedEntity
     implements QualityIndicator<Evaluate,Double> {
-  ...    
+  ...
 
 ```
-Although at a first glance it seems a very complex declaration, it simply states that `Evaluate` must be a List of any kind of jMetal `Solution`, so any attempt to use the indicator with a non compatible object will be detected at compiling time. 
 
-Our approach to implement most of indicators is to consider that most of them require a reference front to be computed, so that front must be incorporated as a parameter of the class constructor: 
+一見すると，非常に複雑な宣言のように見えるが，`Evaluate`は任意の種類のjMetalの`Solution`のリストでなければならないと単純に述べている．したがってコンパイル時にインジケータを互換性のないオブジェクトとともに使用しようとする試みは検出される．
+
+大部分のインジケータを実装するアプローチは，フロントエンドがクラスコンストラクタのパラメータとして組み込まれるように，それらの大部分が参照フロントを計算する必要があることを考慮することである．
+
 
 ```java
   private Front referenceParetoFront ;
@@ -63,7 +66,8 @@ Our approach to implement most of indicators is to consider that most of them re
 ...
 ```
 
-Then, the `evaluate` method computes the indicator value by using the reference front:
+次に`evaluate`メソッドは参照フロントを使ってインジケータ値を計算する
+
 ```java
   /**
    * Evaluate() method
@@ -80,29 +84,35 @@ Then, the `evaluate` method computes the indicator value by using the reference 
   }
 ```
 
-Readers interested in how the Epsilon is computed can find all the code [here]( https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/qualityindicator/impl/Epsilon.java)
+Epsilonの計算方法は[ここ]( https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/qualityindicator/impl/Epsilon.java)から全てのコードを見つけることができる．
 
-### About normalization
-An important issue to take into account is that quality indicators do not normalize the solution list to be evaluated. Instead, the user can choose if the fronts are normalized or not before using them.
+### 正規化について
+考慮すべき重要な問題は，品質指標が評価されるべきソリューションリストを正規化しないことである．その代わり，ユーザはそれらを使用する前に正規化されているかどうかを選択することができる．
 
-This piece of code shows an example of how reading a reference from a file and how to get a `FrontNormalized` from it:
+このコードはファイルからリファレンスを読み込む方法とそこから`FrontNormalized`を取得する方法の例を示している．
+
 ```java
 Front referenceFront = new ArrayFront("fileName");
 FrontNormalizer frontNormalizer = new FrontNormalizer(referenceFront) ;
 ```
-Then, the front normalizer can be use to a normalized reference front:
+
+次に，front normalizerを正規化されたreference frontに使用することができる
+
 ```java
 Front normalizedReferenceFront = frontNormalizer.normalize(referenceFront) ;
 ```
-And then, given any solution list to be normalized, it can be done this way:
+
+そして，正規化されるべき解リストがあれば，このようにすることができる．
+
 ``` java
 List<Solution> population ;
 ...
 Front normalizedFront = frontNormalizer.normalize(new ArrayFront(population)) ;
 ```
 
-###Using quality indicators
-One we have decided about normalization, we can create a quality indicator and use it. We select the Hypervolume as an example:
+### 品質インジケータの使用
+正規化について決めたものは，品質インジケータを作成して使用することができる．Hypervolumeを例として選択する．
+
 ```java
 Hypervolume<List<? extends Solution<?>>> hypervolume ;
 hypervolume = new Hypervolume<List<? extends Solution<?>>>(referenceFront) ;
@@ -110,31 +120,34 @@ hypervolume = new Hypervolume<List<? extends Solution<?>>>(referenceFront) ;
 double hvValue = hypervolume.evaluate(population) ;
 ```
 
-###Discussion
-Leaving the normalization up to the user can be error prone, but there is a performance advantage: if the same indicator has to be applied to many solution lists, the normalization of the reference front is carried out only once. This is the case, for example, when some indicator-based algorithms have to find the solution contributing the least to the Hypervolume.
+### Discussion
+正規化をユーザに任せておくと，エラーが発生しやすくなるが，パフォーマンス状の利点がある．同じインジケータを多くのソリューションリストに適用する必要がある場合，参照フロントの正規化は1回だけ実行される．これは，例えば，インジケータベースのアルゴリズムの中には，Hypervolumeに最も貢献していないソリューションを見つけなければならない場合がある．
 
-### Computing quality indicators from the command line
-If you need to compute the value of a given quality indicator of a front of solutions from the command line you can use the [`CommandLineIndicatorRunner`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-exec/src/main/java/org/uma/jmetal/qualityIndicator/CommandLineIndicatorRunner.java) class.
+### コマンドラインから品質指標を計算する
+コマンドラインからソリューションのフロントの所定の品質インジケータの値を計算する必要がある場合は，[`CommandLineIndicatorRunner`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-exec/src/main/java/org/uma/jmetal/qualityIndicator/CommandLineIndicatorRunner.java)クラスを使用できる．
 
-The usage of this program is:
+このプログラムの使用方法は次の通りである．
+
 ```
 java org.uma.jmetal.qualityIndicator.CommandLineIndicatorRunner indicatorName referenceFront frontToEvaluate TRUE | FALSE
 ```
 
-where indicator name can be:
-* `GD`: Generational distance
-* `IGD`: Inverted generational distance
-* `IGD+`: Inverted generational distance plus
-* `EP`: Epsilon
-* `HV`: Hypervolume
-* `SPREAD`: Spread (two objectives)
-* `GSPREAD`: Generalized spread (more than two objectives
-* `ER`: Error ratio
-* `ALL`: Select all the available indicators
+インジケータ名は次の通りである．
 
-The last parameter is used to indicate whether the fronts are to be normalized or not before computing the quality indicators.
+- `GD`: Generational distance
+- `IGD`: Inverted generational distance
+- `IGD+`: Inverted generational distance plus
+- `EP`: Epsilon
+- `HV`: Hypervolume
+- `SPREAD`: Spread (2つの目的)
+- `GSPREAD`: Generalized spread (2つ以上の目的)
+- `ER`: Error ratio(エラー率)
+- `ALL`: 使用可能な全てのインジケータを選択
 
-We include some examples next. First, we run NSGA-II to solve problem [`ZDT2`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-problem/src/main/java/org/uma/jmetal/problem/multiobjective/zdt/ZDT2.java):
+最後のパラメータは，品質インジケータを計算する前にfrontを正規化するかどうかを示すために使用される．
+
+つぎに，　いくつかの例を示す．まず，NSGA-IIを実行し[`ZDT2`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-problem/src/main/java/org/uma/jmetal/problem/multiobjective/zdt/ZDT2.java)を解決する．
+
 ```
 $ java org.uma.jmetal.runner.multiobjective.NSGAIIRunner org.uma.jmetal.problem.multiobjective.zdt.ZDT2
 
@@ -148,7 +161,8 @@ ago 01, 2015 6:08:17 PM org.uma.jmetal.runner.AbstractAlgorithmRunner printFinal
 INFORMACIÓN: Variables values have been written to file VAR.tsv
 ```
 
-Now we use `CommandLineIndicatorRunner` to compute the Hypervolume value by normalizing first the fronts:
+次は`CommandLineIndicatorRunner`を使用して，最初に正規化してHypervolume値を計算する
+
 ```
 $ java org.uma.jmetal.qualityIndicator.CommandLineIndicatorRunner HV jmetal-problem/src/test/resources/pareto_fronts/ZDT2.pf FUN.tsv TRUE
 
@@ -156,7 +170,8 @@ The fronts are NORMALIZED before computing the indicators
 0.32627228626895705
 ```
 
-If we are interested in computing all the quality indicators, we execute the following command:
+全ての品質インジケータの計算をする場合は次のコマンドを実行する．
+
 ```
 $ java org.uma.jmetal.qualityIndicator.CommandLineIndicatorRunner ALL jmetal-problem/src/test/resources/pareto_fronts/ZDT2.pf FUN.tsv TRUE
 
