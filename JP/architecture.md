@@ -1,18 +1,18 @@
 <!--<div id='id-architecture'/>-->
-## Architecture
+## アーキテクチャ
 
-The architecture of jMetal 5 relies on four interfaces: 
+jMetal5のアーキテクチャは4つのインターフェースに依存している．
 
-![jMetal architecture](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/jMetal5CoreClassDiagram.png)
+![jMetal architecture](./figures/jMetal5CoreClassDiagram.png)
 
-This diagram captures the typical functionality provided by jMetal: an `Algorithm` solves a `Problem` by manipulating a set of potential `Solution` objects through the use of several `Operators`. The `Solution` interface represents the individuals in evolutionary algorithms and the particles in the case of particle swarm optmization algorithms. A `Problem` can create new solutions and evaluate them. 
-Compared to previous versions of jMetal, there is not a class for the concept of population or swarm. In jMetal 5 a population is merely a list of solutions (`List<Solution>` in Java).
+この図はjMetalによって提供される典型的な機能を補足している．アルゴリズムはいくつかの`Operators`を使用して潜在的な`Solution`オブジェクトのセットを操作することによって`Problem`を解決する．`Solution`インターフェースは進化的アルゴリズムの個体と，粒子群最適化アルゴリズム(PSO)の場合の粒子を表す．`Problem`は新しい解決策を作り，それを評価する．
 
+以前のバージョンのjMetalと比較すると，Population(人口)やSwarm(集団)という概念のクラスはない．jMetal5では，人口は単にソリューションのリストにすぎない．(Javaの`List<Solution>`)
 
-### Generics
-We can observe the use of parametrized types to model the use of Java generics, which are now widely applied.
- 
-The use of generics in the architecture allows to align all the components in metaheuristic so that the Java compiler can check that everything fit. For example, this code represents all the elements to configure a the well-known NSGA-II algorithm to solve a continuous problem:
+### Generics(ジェネリクス)
+現在広く使われているJava Genericsの使用をモデル化するために，パラメータ化された型の使用を見ることができる．
+
+アーキテクチャでGenericsを利用することで，全てのコンポーネントをメタヒューリスティックに整列させることができ，Javaコンパイラが全て合っているかどうかを確認することができる．例えば，このコードは，継続的な問題を解決するためによく知られているNSGA-IIアルゴリズムを構成するための全ての要素を表す．
 
 ```java
     Problem<DoubleSolution> problem;
@@ -30,9 +30,8 @@ The use of generics in the architecture allows to align all the components in me
         .build() ;
 ```
 
-### Hierarchy of `Algorithm` related classes
-
-The `Algorithm` class is very simple and it contain only two methods,  `run()` y `getResult()`, as can be observed in the following code snippet:
+### `Algorithm`関連クラスの階層
+`Algorithm`クラスは非常に簡単で，次のコードスニペットに示すように`run()` y `getResult()`という2つのメソッドしかない．
 
 ```java
 package org.uma.jmetal.algorithm;
@@ -50,10 +49,10 @@ public interface Algorithm<Result> extends Runnable, Serializable, DescribedEnti
 
 ```
 
-jMetal 5 includes a hierarchy of classes that inherits from `Algorithm`, as depicted in the following diagram: 
+jMetal5には，次の図に示すように，`Algorithm`を継承するクラスの階層が含まれている．
 
-![jMetal architecture](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/algorithmHierarchy.png)
+![jMetal architecture](./figures/algorithmHierarchy.png)
 
-On the one hand, we found a level of abstract classes (e.g., `AbstractEvolutionaryAlgorithm` or `AbstractParticleSwarmOptimization`) which constitute templates than can be used to facilitate the implementation of algorithms by reusing an extending the already provided code. On the other hand, we can see two examples of algorithms, MOEA/D and NSGAII45, which do not follow none of the provided templates. This way you are free to implement a new algorithm on your own or by extending some of the existing classes.
+一方では，すでに提供されているコードを再利用することによってアルゴリズムの実装を容易にするために使用できるものよりも，テンプレートを構成する抽象クラスのレベル(`AbstractEvolutionaryAlgorithm`か`AbstractParticleSwarmOptimization`)が見つかった．一方，MOEA/DとNSGA-II45の2つのアルゴリズムの例を見ることができる．これにより，自分で新しいアルゴリズムを実装したり，既存のクラスを拡張したりすることができる．
 
-We can observe that, in the case of NSGA-II, it inherits from `AbstractGeneticAlgorithm`, which is a subclass of `AbstractEvolutionaryAlgorithm`. The diagram shows that a steady-state variant of NSGA-II can be defined by extending the `NSGAII` class.
+NSGA-IIの場合，`AbstractGeneticAlgorithm`を継承している．これは`AbstractEvolutionaryAlgorithm`のサブクラスである．この図は，NSGA-IIの定常状態の変形がNSGA-IIクラスを拡張することによって定義できることを示している．
