@@ -15,3 +15,5 @@
 - [BinaryProblemsStudy](https://github.com/jMetal/jMetal/blob/jmetal-5.2/jmetal-exec/src/main/java/org/uma/jmetal/experiment/BinaryProblemsStudy.java): バイナリコード化問題を解く実験の例
 
 - [ZDTScalabilityIStudy](https://github.com/jMetal/jMetal/blob/jmetal-5.2/jmetal-exec/src/main/java/org/uma/jmetal/experiment/ZDTScalabilityIStudy.java): これは実験的研究で同じ問題のいくつかの変数を使用する方法の例である．具体的には，この研究ではZDT1問題の5つの変数を解決することについて，それぞれが異なる決定変数の数を有することについて述べる
+
+[5 アルゴリズムテンプレート](algorithmTemplates.md)

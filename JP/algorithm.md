@@ -242,7 +242,6 @@ public interface AlgorithmBuilder<A extends Algorithm<?>> {
 }
 ```
 
-
-
-
 TO BE COMPLETED
+
+[4 周辺アーキテクチャ](peripheralArchitecture.md)

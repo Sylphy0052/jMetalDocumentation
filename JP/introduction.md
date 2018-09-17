@@ -18,3 +18,5 @@ jMetalの最初のリリースから9年が経過したのち，2014年にソフ
 - 実行時にアルゴリズムの情報を取得する手段の紹介
 
 その結果，jMetal5と呼び，「Redesigning the jMetal Multi-Objective Optimization Framework. Antonio J. Nebro, Juan J. Durillo, Matthieu Vergne. GECCO (Companion) 2015」の論文に記載された．DOI: http://dx.doi.org/10.1145/2739482.2768462
+
+[2.インストール](installation.md)

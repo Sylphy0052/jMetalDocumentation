@@ -272,3 +272,5 @@ if (problem instanceof ConstrainedProblem) {
   ((ConstrainedProblem<DoubleSolution>) problem).evaluateConstraints(solutionn);
 }
 ```
+
+[3.4 アルゴリズムインターフェース](algorithm.md)

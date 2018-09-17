@@ -116,3 +116,5 @@ public class SBXCrossover implements CrossoverOperator<DoubleSolution> {
 ```
 
 TO BE COMPLETED
+
+[3.3 問題インターフェース](problem.md)

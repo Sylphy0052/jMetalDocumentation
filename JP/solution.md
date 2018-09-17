@@ -253,3 +253,5 @@ Ranking ranking = computeRanking(jointPopulation);
 ```
 
 このようにして，ソリューション属性はランキングを実装するクラスによって内部的に管理され，メタヒューリスティックに隠される．
+
+[3.2 オペレータインターフェース](operator.md)

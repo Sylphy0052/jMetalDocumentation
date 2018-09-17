@@ -188,3 +188,5 @@ ER: 1.0
 SC(refPF, front): 0.89
 SC(front, refPF): 0.0
 ```
+
+[7 前回の変更履歴](changelog.md)

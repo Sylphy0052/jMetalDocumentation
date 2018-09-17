@@ -16,8 +16,8 @@
    2. [操作インターフェース](operator.md)
    3. [問題インターフェース](problem.md)
    4. [アルゴリズムインターフェース](algorithm.md)
-4. 周辺アーキテクチャ
-   1. [対策](measures.md)
+4. [周辺アーキテクチャ](peripheralArchitecture.md)
+   1. [測定](measures.md)
    2. [評価](evaluators.md)
    3. [実験的研究](experimentalStudies.md)
 5. [アルゴリズムテンプレート](algorithmTemplates.md)

@@ -124,3 +124,5 @@ public abstract class AbstractEvolutionStrategy<S extends Solution<?>, Result> e
 [PAES](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-algorithm/src/main/java/org/uma/jmetal/algorithm/multiobjective/paes/PAES.java) アルゴリズムはこのテンプレートに基づいている
 
 TO BE COMPLETED
+
+[6 品質尺度](qualityIndicators.md)

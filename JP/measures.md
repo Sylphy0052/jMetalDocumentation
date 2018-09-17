@@ -265,3 +265,5 @@ public class SimpleMeasureManager implements MeasureManager {
 タイプ固有の基本的なメソッドがあるが，提供される測定のタイプを自動的に認識し，対応するタイプ固有のメソッドを適用する汎用メソッドもある．`PullMeasure`と`PushMeasure`の両方を実装する測定も認識され，`PullMeasure`と`PushMeasure`の両方として追加されるので，同じ`key`で`getPullMeasure(key)`と`getPushMeasure(key)`を呼び出し，同じ尺度を返す．Genericメソッドは一度にいくつかのキーと測定を管理することで大規模な設定機能も提供する．
 
 非jMetalアルゴリズムのインスタンスが提供されている場合，`MeasureFactory.createPullsFromFields(object)`と`MeasureFactory.createPullsFromGetters(object)`を使って簡単にいくつかの測定を取得することができる．これらの2つのメソッドによって返されたマップは，`SimpleMeasureManager.setAllMeasures(measure)`に提供され，実際のアルゴリズムについて何も知らずに，完全に機能し，`MeasureManager`を使用できるようになる．実行方法はわかっているので，[*How to use measures?*](#how-to-use-measures)説で説明しているように，専用のスレッドで実行することができる．アルゴリズムに関する情報を入手するための利用可能な手段である．しかし，[*Conversions `PullMeasure` <-> `PushMeasure`*](#conversions-pullmeasure---pushmeasure)節に書かれているように，`PullMeasures`から`PushMeasures`を作るのはコストがかかるが，逆はコストが安い．したがって，jMetalとは独立したアルゴリズムを単純に実装し，このプロシージャを使用して一連の`PullMeasures`を取得することができるが，jMetalの形式を使用する可能性のあるアルゴリズムを設計する人は，`PushMeasures`(または両方の組み合わせ)より多くの情報をより最適な方法で検索することができる．
+
+[4.2 評価](evaluators.md)

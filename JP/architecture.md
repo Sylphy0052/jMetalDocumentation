@@ -56,3 +56,5 @@ jMetal5には，次の図に示すように，`Algorithm`を継承するクラ�
 一方では，すでに提供されているコードを再利用することによってアルゴリズムの実装を容易にするために使用できるものよりも，テンプレートを構成する抽象クラスのレベル(`AbstractEvolutionaryAlgorithm`か`AbstractParticleSwarmOptimization`)が見つかった．一方，MOEA/DとNSGA-II45の2つのアルゴリズムの例を見ることができる．これにより，自分で新しいアルゴリズムを実装したり，既存のクラスを拡張したりすることができる．
 
 NSGA-IIの場合，`AbstractGeneticAlgorithm`を継承している．これは`AbstractEvolutionaryAlgorithm`のサブクラスである．この図は，NSGA-IIの定常状態の変形がNSGA-IIクラスを拡張することによって定義できることを示している．
+
+[3.1 解決インターフェース](solution.md)
