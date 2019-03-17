@@ -3,16 +3,16 @@
 Most of metaheuristic families are characterized by a common behaviour which is shared by all the algorithms belonging to the family. This behaviour can be expressed as a template that can be instatiated to implement a particular algorithm. From a software engineering point of view, an algorithm whose behavior falls in a basic template would only require to implement some specific methods for the new technique; the common behavior would not be needed to be programmed, therefore resulting in less code replication. This inversion of control if a characteristic of [software frameworks](https://en.wikipedia.org/wiki/Software_framework), as is the case of jMetal.
 
 ### The Evolutionary Algorithm Template
-Many papers about evolutionary algorithms (EAs) include a pseudo-code to describe them similar to this one:  
+Many papers about evolutionary algorithms (EAs) include a pseudo-code to describe them similar to this one:
 ```
-P(0) ← GenerateInitialSolutions() 
+P(0) ← GenerateInitialSolutions()
 t ← 0
 Evaluate(P(0))
 while not StoppingCriterion() do
   P'(t) ← selection(P(t))
-  P''(t) ← Variation(P'(t)) 
+  P''(t) ← Variation(P'(t))
   Evaluate(P''(t))
-  P (t + 1) ← Update(P (t), P''(t)) 
+  P (t + 1) ← Update(P (t), P''(t))
   t←t+1
 end while
 ```
@@ -60,7 +60,7 @@ public abstract class AbstractEvolutionaryAlgorithm<S extends Solution<?>, R>  i
       updateProgress();
     }
   }
-}  
+}
 ```
 The generics in the class declaration indicate that an algorithm works with subclasses of the `Solution` interface (e.g., `DoubleSolution`, `BinarySolution`, and so on) and returns a result (typically, a single solution in the case of single-objective metaheuristics and a list of solutions in the case of multi-objective techniques). We can observe as the population is implemented a list of solutions.
 
@@ -74,7 +74,7 @@ To develop an EA, all the abstract the methods used in the `run()` method must b
 * `replacement(population, offspringPopulation)`: the population for the next generation is built from individuals of the current and the offspring populations.
 * `updateProgress()`: the counter of the progress of the algorithm (evaluations, iterations, or whatever) is updated.
 
-#### Genetic algorithms 
+#### Genetic algorithms
 If we are interested in implementing a genetic algorithm, a subfamily of EAs characterized by applying a selection operator and by using a crossover and a mutation operator for the reproduction step, a subclass of `AbstractEvolutionaryAlgorithm` called [AbstractGeneticAlgorithm](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/algorithm/impl/AbstractGeneticAlgorithm.java) is provided:
 ```java
 package org.uma.jmetal.algorithm.impl;

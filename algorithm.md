@@ -17,12 +17,12 @@ public interface Algorithm<Result> extends Runnable {
 
 ```
 This interface is very generic: it specifies that an algorithm must have a `run()` method and return a result by the `getResult()` method. As it extends `Runnable`, any algorithm can be executed in a thread.
- 
-The symplicity of `Algorithm` offers plenty of freedom to implement a metaheuristic according to your favorite preferences. However, as jMetal 5 is a framework it includes a set of resources and strategies to help in the implementation of algorithms with the idea of promoting good design, code reusing, and flexibility. The key components are the use of the [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) and [algorithm templates](https://github.com/jMetal/jMetalDocumentation/blob/master/algorithmTemplates.md). In the next section we give a detailed description of how the well-known NSGA-II algorithm is implemented, configured, and extended.
+
+The symplicity of `Algorithm` offers plenty of freedom to implement a metaheuristic according to your favorite preferences. However, as jMetal 5 is a framework it includes a set of resources and strategies to help in the implementation of algorithms with the idea of promoting good design, code reusing, and flexibility. The key components are the use of the [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) and [algorithm templates](./algorithmTemplates.md). In the next section we give a detailed description of how the well-known NSGA-II algorithm is implemented, configured, and extended.
 
 ### Case study: NSGA-II
 
-NSGA-II is a genetic algorithm (GA), i.e. it belongs to the evolutionary algorithms (EAs) family. The implementation of NSGA-II provided in jMetal 5.0 follows the evolutionary algorithm template described in the [algorithm templates](https://github.com/jMetal/jMetalDocumentation/blob/master/algorithmTemplates.md) section of the documentation. This means that it must define the methods of the [`AbstractEvolutionaryAlgorithm`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/algorithm/impl/AbstractEvolutionaryAlgorithm.java) class. According to this template, the flow control of the algorithm is defined in the `run()` method:
+NSGA-II is a genetic algorithm (GA), i.e. it belongs to the evolutionary algorithms (EAs) family. The implementation of NSGA-II provided in jMetal 5.0 follows the evolutionary algorithm template described in the [algorithm templates](./algorithmTemplates.md) section of the documentation. This means that it must define the methods of the [`AbstractEvolutionaryAlgorithm`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/algorithm/impl/AbstractEvolutionaryAlgorithm.java) class. According to this template, the flow control of the algorithm is defined in the `run()` method:
 ```java
 @Override public void run() {
     List<S> offspringPopulation;
@@ -72,7 +72,7 @@ The constructor parameter contains:
 * The problem to solve.
 * The main algorithm parameters: the population size and the maximum number of iterations.
 * The genetic operators: crossover, mutation, and selection.
-* An [evaluator](https://github.com/jMetal/jMetalDocumentation/blob/master/evaluators.md) object to evaluate the solutions in the population.
+* An [evaluator](./evaluators.md) object to evaluate the solutions in the population.
 
 We can observe that all the parameters depend on `S`. This way, if `S` is instantiated e.g. to [`DoubleSolution`](https://github.com/jMetal/jMetal/blob/jmetal-5.0/jmetal-core/src/main/java/org/uma/jmetal/solution/DoubleSolution.java), then the problems to be solved must extend `Problem<DoubleSolution>` and all the operators must manipulate `DoubleSolution` objects. The interesting point of this approch is the compiler can ensure that there are no errors related with the application of wrong operators to a given solution.
 

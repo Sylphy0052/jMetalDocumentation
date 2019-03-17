@@ -4,26 +4,26 @@ Once you have the source code of jMetal you can use it in to ways: from an IDE o
 
 ### Intellj Idea
   To build the project you have to select `Build` -> `Make Project`
-  
-![Building with IntelliJ Idea](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/BuildIJICE14.png)  
-  
-  
+
+![Building with IntelliJ Idea](./figures/BuildIJICE14.png)
+
+
 ###Eclipse
   If the `Project` -> `Build Automatically` is set, Eclipse will automatically build the project. Otherwise,  select  `Project` -> `Build Project`
-  
-![Building with Eclipse](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/BuildEclipse.png)  
 
-  
+![Building with Eclipse](./figures/BuildEclipse.png)
+
+
 ###Netbeans:
   In Netbeans you have to select `Run` -> `Build Project`
 
-![Building with Netbeans](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/BuildNetbeans.png)  
+![Building with Netbeans](./figures/BuildNetbeans.png)
 
 ### Building from the command line
 
 Once you have downloaded the source code you can use the command line to build the project by using Maven commands. If you open a terminal you will have something similar to this:
 
-![jMetal in a terminal](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/jMetalInTerminal.png)  
+![jMetal in a terminal](./figures/jMetalInTerminal.png)  
 
 Then you have Maven to your disposal to work with the project:
 * `mvn clean`: cleaning the project

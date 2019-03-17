@@ -1,17 +1,17 @@
 <!--<div id='id-architecture'/>-->
 ## Architecture
 
-The architecture of jMetal 5 relies on four interfaces: 
+The architecture of jMetal 5 relies on four interfaces:
 
-![jMetal architecture](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/jMetal5CoreClassDiagram.png)
+![jMetal architecture](./figures/jMetal5CoreClassDiagram.png)
 
-This diagram captures the typical functionality provided by jMetal: an `Algorithm` solves a `Problem` by manipulating a set of potential `Solution` objects through the use of several `Operators`. The `Solution` interface represents the individuals in evolutionary algorithms and the particles in the case of particle swarm optmization algorithms. A `Problem` can create new solutions and evaluate them. 
+This diagram captures the typical functionality provided by jMetal: an `Algorithm` solves a `Problem` by manipulating a set of potential `Solution` objects through the use of several `Operators`. The `Solution` interface represents the individuals in evolutionary algorithms and the particles in the case of particle swarm optmization algorithms. A `Problem` can create new solutions and evaluate them.
 Compared to previous versions of jMetal, there is not a class for the concept of population or swarm. In jMetal 5 a population is merely a list of solutions (`List<Solution>` in Java).
 
 
 ### Generics
 We can observe the use of parametrized types to model the use of Java generics, which are now widely applied.
- 
+
 The use of generics in the architecture allows to align all the components in metaheuristic so that the Java compiler can check that everything fit. For example, this code represents all the elements to configure a the well-known NSGA-II algorithm to solve a continuous problem:
 
 ```java
@@ -50,9 +50,9 @@ public interface Algorithm<Result> extends Runnable, Serializable, DescribedEnti
 
 ```
 
-jMetal 5 includes a hierarchy of classes that inherits from `Algorithm`, as depicted in the following diagram: 
+jMetal 5 includes a hierarchy of classes that inherits from `Algorithm`, as depicted in the following diagram:
 
-![jMetal architecture](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/algorithmHierarchy.png)
+![jMetal architecture](./figures/algorithmHierarchy.png)
 
 On the one hand, we found a level of abstract classes (e.g., `AbstractEvolutionaryAlgorithm` or `AbstractParticleSwarmOptimization`) which constitute templates than can be used to facilitate the implementation of algorithms by reusing an extending the already provided code. On the other hand, we can see two examples of algorithms, MOEA/D and NSGAII45, which do not follow none of the provided templates. This way you are free to implement a new algorithm on your own or by extending some of the existing classes.
 

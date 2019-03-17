@@ -10,10 +10,10 @@ jMetal 5 is structured into four submodules:
 * `jmetal-exec` : Executable programs to configure and run the algorithms plus some utilities.
 
 These modules can be found in the [Central Repository](http://search.maven.org/) (note that the last version is jMetal 5.6):
-![jMetal in Central Repository](https://github.com/jMetal/jMetalUserManual/blob/master/figures/centralRepository.png)
+![jMetal in Central Repository](./figures/centralRepository.png)
 
 Here you can get the Maven dependency you need. For example, if your want to use some of the classes in `jmetal-core`, you just have to add this dependence to the `pom.xml` file of your project:
-![Maven dependence](https://github.com/jMetal/jMetalUserManual/blob/master/figures/mavenDependence.png)
+![Maven dependence](./figures/mavenDependence.png)
 
 For Gradle the process is similar. Make sure you have the Maven repository listed in your build.gradle:
 

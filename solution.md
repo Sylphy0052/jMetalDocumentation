@@ -7,7 +7,7 @@ etc.) that can be applied. Thus, selecting a specific representation has a great
 of metaheuristics and, hence, in the quality of the obtained results.
 
 The following figure depicts the basic components that are used for representing solutions in jMetal 5:
-![The Solution Interface](https://github.com/jMetal/jMetalDocumentation/blob/master/figures/jMetal5SolutionClassDiagram.png)
+![The Solution Interface](./figures/jMetal5SolutionClassDiagram.png)
 where three representations are included: binary, real, and integer. By using this approach, many implementations can be provided for the same encoding, adding an extra degree of flexibility. The use of generics also allows that an attempt to incorrectly assign the value of a variable results in a compilation error, e.g., trying to assign to an int variable the variable value of a `DoubleSolution`.
 
 The code of the `Solution` interface is shown next:
@@ -32,7 +32,7 @@ public interface Solution<T> extends Serializable {
 }
 ```
 
-The interface has methods for accessing both the variables and the objectives of a solution, a copy method, and to methods for accessing solution atributes. 
+The interface has methods for accessing both the variables and the objectives of a solution, a copy method, and to methods for accessing solution atributes.
 
 ### Defining encodings
 Defining a particular encoding implies implementing or extending the `Solution` interface. This way, the interfaces for solutions having a list of double and integer variables are defined as follows:
@@ -44,17 +44,17 @@ public interface DoubleSolution extends Solution<Double> {
   public Double getUpperBound(int index) ;
 }
 ```
-```java 
+```java
 package org.uma.jmetal.solution;
 
 public interface IntegerSolution extends Solution<Integer> {
   public Integer getLowerBound(int index) ;
   public Integer getUpperBound(int index) ;
 }
-``` 
+```
 These interfaces provide for getting the lower and upper bounds of the double and integer variables. The way of setting those values are left to the implementation classes.
 
-In the case of a binary solution, the interface is: 
+In the case of a binary solution, the interface is:
 ```java
 import org.uma.jmetal.util.binarySet.BinarySet;
 
@@ -91,7 +91,7 @@ public abstract class AbstractGenericSolution<T, P extends Problem<?>> implement
   protected Map<Object, Object> attributes ;
   protected final JMetalRandom randomGenerator ;
 ```
-which contains an implementation to all the methods in `Solution`. This class is extended by all the solution implementations in jMetal 5: `DefaultBinarySolution`, `DefaultIntegerSolution`, `DefaultDoubleSolution`, `DefaultIntegerDoubleSolution`, `DefaultIntegerPermutationSolution`, and `DefaultDoubleBinarySolution`. 
+which contains an implementation to all the methods in `Solution`. This class is extended by all the solution implementations in jMetal 5: `DefaultBinarySolution`, `DefaultIntegerSolution`, `DefaultDoubleSolution`, `DefaultIntegerDoubleSolution`, `DefaultIntegerPermutationSolution`, and `DefaultDoubleBinarySolution`.
 
 ### Where are the populations?
 
@@ -153,7 +153,7 @@ public class GenericSolutionAttribute <S extends Solution<?>, V> implements Solu
   }
 }
 ```
-Note that in the current implementation the `getAttributedID()` returns a class identifier. This means that we cannot have two different attributes of the same class. 
+Note that in the current implementation the `getAttributedID()` returns a class identifier. This means that we cannot have two different attributes of the same class.
 
 ### Example of attribute: constraints
 Optimization problems can have side constraints, and this implies that evaluating a solution requires to compute the objective functions and also the constraints to apply some kind of constraint handling mechanism. In jMetal 5 solution attributes are used to incorporate constraint information into the solutions.
